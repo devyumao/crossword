@@ -11,6 +11,10 @@ DevilPace.preload = {
         game.load.image('cloud', 'asset/img/cloud.png');
         game.load.image('big-cloud', 'asset/img/big-cloud.png');
         game.load.image('sym-cloud', 'asset/img/sym-cloud.png');
+        game.load.image('dialog-1', 'asset/img/dialog-1.png');
+        game.load.image('dialog-2', 'asset/img/dialog-2.png');
+        game.load.spritesheet('button-1', 'asset/img/button-1.png', 140, 54);
+        game.load.spritesheet('button-2', 'asset/img/button-2.png', 140, 54);
     },
     create: function () {
         this.state.start('play');
