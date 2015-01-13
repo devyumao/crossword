@@ -3,6 +3,10 @@ var DevilPace = DevilPace || {};
 DevilPace.preload = {
     preload: function () {
         var game = this.game;
+
+        var loading = game.add.text(240, 360, 'Loading...', {font: '40pt Arial', fill: '#fff'});
+        loading.anchor.set(0.5);
+
         game.load.image('dude', 'asset/img/dude.png');
         game.load.image('balloon', 'asset/img/balloon.png');
         game.load.image('view', 'asset/img/view.png');
