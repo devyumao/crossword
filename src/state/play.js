@@ -51,7 +51,7 @@ var DevilPace = DevilPace || {};
             var tweenDialog1 = game.add.tween(dialog1.scale).to({x: 1, y: 1}, 600, Phaser.Easing.Back.Out, false, 500);
 
             var dlg1Style = {font: '14pt Arial', fill: '#333'};
-            var dlg1Content = 'I’ve been wanting to meet you.\nDo you agree to be my friend?';
+            var dlg1Content = 'I’ve been wanting to meet you.\nWould you be my friend?';
             var dlg1Text = game.add.text(55, -320, '', dlg1Style);
             dlg1Text.lineSpacing = 15;
             dlg1Text.alpha = 0.6;
