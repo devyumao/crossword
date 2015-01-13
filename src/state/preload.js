@@ -15,6 +15,8 @@ DevilPace.preload = {
         game.load.image('dialog-2', 'asset/img/dialog-2.png');
         game.load.spritesheet('button-1', 'asset/img/button-1.png', 140, 54);
         game.load.spritesheet('button-2', 'asset/img/button-2.png', 140, 54);
+        game.load.image('mask', 'asset/img/mask.png');
+        game.load.image('card', 'asset/img/card.png');
     },
     create: function () {
         this.state.start('play');
