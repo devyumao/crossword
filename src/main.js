@@ -1,9 +1,21 @@
-var DevilPace = DevilPace || {};
+/**
+ * @file 主程序
+ * @author yumao [zhangyu38@baidu.com]
+ * @create 2015-01-25
+ */
 
-DevilPace.game = new Phaser.Game(480, 800, Phaser.AUTO, '');
+define(function (require) {
 
-DevilPace.game.state.add('boot', DevilPace.boot);
-DevilPace.game.state.add('preload', DevilPace.preload);
-DevilPace.game.state.add('play', DevilPace.play);
+    return {
+        init: function () {
+            var game = new Phaser.Game(480, 800, Phaser.AUTO, '');
 
-DevilPace.game.state.start('boot');
+            game.state.add('boot', require('./state/boot'));
+            game.state.add('preload', require('./state/preload'));
+            game.state.add('level', require('./state/level'));
+
+            game.state.start('boot');
+        }
+    };
+
+});
