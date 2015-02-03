@@ -10,15 +10,18 @@ define(function () {
         preload: function () {
             var game = this.game;
 
+            game.load.image('level', 'asset/img/level.png');
+
             game.load.image('grid', 'asset/img/grid.png');
             game.load.image('grid-disabled', 'asset/img/grid-disabled.png');
             game.load.image('grid-selected', 'asset/img/grid-selected.png');
             game.load.image('grid-adjacent', 'asset/img/grid-adjacent.png');
             game.load.image('key', 'asset/img/key.png');
             game.load.image('clue', 'asset/img/clue.png');
+            game.load.image('back', 'asset/img/back.png');
         },
         create: function () {
-            this.state.start('level');
+            this.state.start('select');
         }
     };
 

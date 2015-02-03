@@ -28,6 +28,38 @@ define(function () {
         }
     }
 
+    Grid.prototype.clear = function (render) {
+        if (this.state === 'disabled') {
+            return;
+        }
+        this.state = 'active';
+        this.display = '';
+        this.correct = false;
+        render(this.element);
+    };
+
+    Grid.prototype.getAttrs = function () {
+        var attrs = {
+            state: this.state,
+        };
+        if (this.state !== 'disabled') {
+            attrs.display = this.display;
+            attrs.correct = this.correct;
+        }
+
+        return attrs;
+    };
+
+    Grid.prototype.setAttrs = function (attrs, render) {
+        if (this.state === 'disabled') {
+            return;
+        }
+        this.state = attrs.state;
+        this.display = attrs.display;
+        this.correct = attrs.correct;
+        render(this.element, this.display);
+    };
+
     Grid.prototype.getElement = function () {
         return this.element;
     };
@@ -77,11 +109,10 @@ define(function () {
         var hash = {};
         var thisCoord = coord(this.x, this.y);
         var riddles = this.riddles;
-        var riddle;
 
         // TODO: 给Riddle
         for (var type in riddles) {
-            riddle = riddles[type];
+            var riddle = riddles[type];
             if (riddles[type]) {
                 riddle.getGrids().forEach(function (grid) {
                     var thatCoord = coord(grid.x, grid.y);
@@ -100,13 +131,17 @@ define(function () {
     };
 
     Grid.prototype.isSolved = function () {
-        return this.state == 'solved';
+        return this.state === 'solved';
+    };
+
+    Grid.prototype.isDisabled = function () {
+        return this.state === 'disabled';
     };
 
     Grid.prototype.check = function (render) {
         var riddles = this.riddles;
         for (var type in riddles) {
-            riddle = riddles[type];
+            var riddle = riddles[type];
             if (riddle) {
                 riddle.check(render);
             }
@@ -116,6 +151,7 @@ define(function () {
     Grid.prototype.showWord = function (render) {
         render(this.element, this.word);
         this.state = 'solved';
+        this.display = this.word;
     };
 
     Grid.prototype.setDisplay = function (display) {
@@ -129,10 +165,9 @@ define(function () {
     Grid.prototype.test = function (key, render) {
         this.display = key;
         var riddles = this.riddles;
-        var riddle;
         var change = 0;
         for (var type in riddles) {
-            riddle = riddles[type];
+            var riddle = riddles[type];
             if (!riddle) {
                 continue;
             }
@@ -159,6 +194,7 @@ define(function () {
         this.check(render);
     };
 
+
     // Riddle
     function Riddle(options) {
         this.clue = options.clue;
@@ -169,7 +205,6 @@ define(function () {
         this.starty = options.starty;
         this.grids = this.grids ? this.grids : [];
         this.size = this.keys.length;
-        // this.solved = typeof options.solved !== 'undefined' ? options.solved : false;
         var solved = 0;
         this.grids.forEach(function (grid) {
             if (grid.isSolved()) {
@@ -178,6 +213,20 @@ define(function () {
         });
         this.solved = solved;
     }
+
+    Riddle.prototype.clear = function () {
+        this.solved = 0;
+    };
+
+    Riddle.prototype.getAttrs = function () {
+        return {
+            solved: this.solved
+        };
+    };
+
+    Riddle.prototype.setAttrs = function (attrs) {
+        this.solved = attrs.solved;
+    };
 
     Riddle.prototype.addGrid = function (grid) {
         this.grids.push(grid);
@@ -215,9 +264,11 @@ define(function () {
 
     // Matrix
     function Matrix(options) {
+        this.storeKey = options.storeKey;
         this.size = options.size;
         this.data = options.data;
         this.grids = {};
+        this.riddles = [];
         this.currents = [];
         this.selected = null;
         this.direction = 'none';
@@ -252,9 +303,30 @@ define(function () {
 
     Matrix.prototype.select = function (x, y, clrRender, sltRender, ajtRender) {
         this.selected = this.get(x, y);
+        // switch (this.selected.getDirection()) {
+        //     case 'right':
+        //         this.direction = 'right';
+        //         break;
+        //     case 'down':
+        //         this.direction = 'down';
+        //         break;
+        //     default:
+        // }
         this._clearCurrents(clrRender);
         this._addCurrents([this.selected], sltRender);
         this._addCurrents(this.selected.getAdjacent(), ajtRender);
+    };
+
+    Matrix.prototype.adjustDirection = function () {
+        switch (this.selected.getDirection()) {
+            case 'right':
+                this.direction = 'right';
+                break;
+            case 'down':
+                this.direction = 'down';
+                break;
+            default:
+        }
     };
 
     Matrix.prototype.getSelected = function () {
@@ -267,64 +339,98 @@ define(function () {
 
     Matrix.prototype.getActive = function (x, y) {
         var grid = this.get(x, y);
-        if (!grid.isActive()) {
+        if (grid && !grid.isActive()) {
             grid = null;
         }
         return grid;
     };
 
     Matrix.prototype.right = function (x, y) {
-        this.direction = 'right';
         return this.getActive(x + 1, y);
     };
 
     Matrix.prototype.down = function (x, y) {
-        this.direction = 'down';
         return this.getActive(x, y + 1);
     };
 
+    Matrix.prototype.goRight = function (x, y) {
+        this.direction = 'right';
+        return this.right(x, y);
+    };
+
+    Matrix.prototype.goDown = function (x, y) {
+        var down = this.down(x, y);
+        if (!down) {
+            down = this.down(x, y + 1);
+        }
+        this.direction = 'down';
+        return down;
+    };
+
     Matrix.prototype.next = function () {
-        var curr;
-        var x;
-        var y;
-        if (arguments.length === 1) {
-            curr = arguments[0];
-            x = curr.getX();
-            y = curr.getY();
-        }
-        else {
-            x = arguments[0];
-            y = arguments[1];
-            curr = this.get(x, y);
-        }
+        var curr = this.selected;
+        var x = curr.getX();
+        var y = curr.getY();
+        // if (arguments.length === 1) {
+        //     curr = arguments[0];
+        //     x = curr.getX();
+        //     y = curr.getY();
+        // }
+        // else {
+        //     x = arguments[0];
+        //     y = arguments[1];
+        //     curr = this.get(x, y);
+        // }
         
         if (!curr) {
             return null;
         }
-        var next;
+        console.log(curr);
+        var next = null;
+        var right = this.right(x, y);
+        var down = this.down(x, y);
         switch (curr.getDirection()) {
             case 'none':
-                next = null;
+                this.direction = 'none';
                 break;
             case 'right':
-                next = this.right(x, y);
+                // if (!right.isActive()) {
+                //     this.direction = 'none';
+                // }
+                if (!curr.isSolved()
+                    && this.direction === 'down'
+                    && (!down || !down.isActive())) {
+                }
+                else {
+                    next = this.goRight(x, y);
+                }
                 break;
             case 'down':
-                next = this.down(x, y);
+                // if (!down.isActive()) {
+                //     this.direction = 'none';
+                // }
+                if (!curr.isSolved()
+                    && this.direction === 'right'
+                    && (!right || !right.isActive())) {
+                    // this.direction = 'none';
+                }
+                else {
+                    next = this.goDown(x, y);
+                }
                 break;
             case 'both':
                 switch (this.direction) {
                     case 'none':
-                        next = this.right(x, y);
+                        next = this.goRight(x, y);
                         if (!next) {
-                            next = this.down(x, y);
+                            next = this.goDown(x, y);
                         }
                         break;
                     case 'right':
-                        next = this.right(x, y);
+                        next = this.goRight(x, y);
                         break;
                     case 'down':
-                        next = this.down(x, y);
+                        next = this.goDown(x, y);
                         break;
                     default:
                 }
@@ -350,14 +456,10 @@ define(function () {
                 starty: item.starty
             });
 
-            var i;
-            var len = item.keys.length;
-            var x;
-            var y;
             var orientation = item.orientation;
-            for (i = 0; i < len; ++i) {
-                x = item.startx + (orientation === 0 ? i : 0);
-                y = item.starty + (orientation === 1 ? i : 0);
+            for (var i = 0, len = item.keys.length; i < len; ++i) {
+                var x = item.startx + (orientation === 0 ? i : 0);
+                var y = item.starty + (orientation === 1 ? i : 0);
                 var grid = me.get(x, y);
                 if (!grid) {
                     grid = new Grid({
@@ -396,19 +498,23 @@ define(function () {
                 }
                 riddle.addGrid(grid);
             }
+
+            me.riddles.push(riddle);
         });
     };
 
     Matrix.prototype._fillRemainGrids = function (generator) {
-        var col;
-        var row;
-        for (col = 0; col < this.size; ++col) {
-            for (row = 0; row < this.size; ++row) {
+        for (var col = 0; col < this.size; ++col) {
+            for (var row = 0; row < this.size; ++row) {
                 if (!this.get(col, row)) {
-                    this.set(col, row, {
-                        state: 'disabled',
-                        element: generator(col, row)
-                    });
+                    this.set(
+                        col,
+                        row,
+                        new Grid({
+                            state: 'disabled',
+                            element: generator(col, row)
+                        })
+                    );
                 }
             }
         }
@@ -417,6 +523,64 @@ define(function () {
     Matrix.prototype._init = function (data, aGenerator, dGenerator) {
         this._fillPuzzle(data, aGenerator);
         this._fillRemainGrids(dGenerator);
+    };
+
+    Matrix.prototype.store = function () {
+        var gridsAttrs = {};
+        var grids = this.grids;
+        for (var coord in grids) {
+            var grid = grids[coord];
+            if (!grid.isDisabled()) {
+                gridsAttrs[coord] = grid.getAttrs();
+            }
+        }
+
+        var riddlesAttrs = [];
+        this.riddles.forEach(function (riddle, index) {
+            riddlesAttrs[index] = riddle.getAttrs();
+        });
+
+        var data = {
+            grids: gridsAttrs,
+            riddles: riddlesAttrs
+        };
+        localStorage.setItem(this.storeKey, JSON.stringify(data));
+    };
+
+    Matrix.prototype.retrive = function (render) {
+        var me = this;
+        var data = JSON.parse(localStorage.getItem(this.storeKey));
+
+        if (!data) {
+            return;
+        }
+
+        var gridsAttrs = data.grids;
+        for (var coord in gridsAttrs) {
+            var attrs = gridsAttrs[coord];
+            this.grids[coord].setAttrs(attrs, render);
+        }
+
+        data.riddles.forEach(function (attrs, index) {
+            me.riddles[index].setAttrs(attrs);
+        });
+    };
+
+    Matrix.prototype.clear = function (render) {
+        this.currents = [];
+        this.selected = null;
+        this.direction = 'none';
+
+        var grids = this.grids;
+        for (var coord in grids) {
+            grids[coord].clear(render);
+        }
+
+        this.riddles.forEach(function (riddle) {
+            riddle.clear();
+        });
+
+        localStorage.removeItem(this.storeKey);
     };
 
     return Matrix;

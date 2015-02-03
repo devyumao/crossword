@@ -16,6 +16,8 @@ define(function (require) {
     var matrix;
     var clueAcross;
     var clueDown;
+    var levelNo;
+    var storeKey;
 
     function clrRender(grid) {
         grid.getElement().button.loadTexture('grid');
@@ -23,6 +25,20 @@ define(function (require) {
 
     function sltRender(grid) {
         grid.getElement().button.loadTexture('grid-selected');
+        var clue1 = grid.getAcrossClue();
+        if (clue1) {
+            clueAcross.setText('横：' + clue1);
+        }
+        else {
+            clueAcross.setText('');
+        }
+        var clue2 = grid.getDownClue();
+        if (clue2) {
+            clueDown.setText('纵：' + clue2);
+        }
+        else {
+            clueDown.setText('');
+        }
     }
 
     function ajtRender(grid) {
@@ -31,8 +47,10 @@ define(function (require) {
 
     function fetch(game, handler) {
         ajax.get({
-            // url: 'mock/level1.json',
             url: AJAX_URL + 'guess',
+            data: {
+                index: levelNo
+            },
             success: function (res) {
                 res = JSON.parse(res);
                 afterFetch(game, res.tableList);
@@ -68,26 +86,13 @@ define(function (require) {
         var x = (game.width - matrixSize * gridSize) / 2;
 
         matrix = new Matrix({
+            storeKey: storeKey,
             size: matrixSize,
             data: data,
             aGenerator: function (col, row) {
                 var onClick = function () {
                     matrix.select(col, row, clrRender, sltRender, ajtRender);
-                    var grid = matrix.get(col, row);
-                    var clue1 = grid.getAcrossClue();
-                    if (clue1) {
-                        clueAcross.setText('横：' + clue1);
-                    }
-                    else {
-                        clueAcross.setText('');
-                    }
-                    var clue2 = grid.getDownClue();
-                    if (clue2) {
-                        clueDown.setText('纵：' + clue2);
-                    }
-                    else {
-                        clueDown.setText('');
-                    }
+                    matrix.adjustDirection();
                 };
 
                 var left = x + col * gridSize;
@@ -116,6 +121,10 @@ define(function (require) {
                 element.scale.set(gridSize - 1);
                 return element;
             }
+        });
+
+        matrix.retrive(function (element, display) {
+            element.text.setText(display);
         });
     }
 
@@ -151,11 +160,12 @@ define(function (require) {
                 element.text.setText(word);
             });
 
-            var next = matrix.next(selected);
+            var next = matrix.next();
             if (next) {
                 matrix.select(next.getX(), next.getY(), clrRender, sltRender, ajtRender);
             }
 
+            matrix.store();
         };
 
         keyLines.forEach(function (line) {
@@ -195,11 +205,45 @@ define(function (require) {
     }
 
     return {
+        init: function (level) {
+            levelNo = level;
+            // levelNo = 1;
+            storeKey = 'level-' + levelNo;
+        },
         preload: function () {
         
         },
         create: function () {
+            var me = this;
             var game = this.game;
+
+            var backBtn = game.add.button(10, 10, 'back', function () {
+                me.state.start('select');
+            });
+            backBtn.scale.set(60, 30);
+            var backText = game.add.text(
+                10 + backBtn.width / 2,
+                10 + backBtn.height / 2,
+                '返回',
+                {font: '18px Arial', fill: '#fff'}
+            );
+            backText.anchor.set(0.5);
+
+            var restartBtn = game.add.button(game.width - 10 - 60, 10, 'back', function () {
+                matrix.clear(function (element) {
+                    element.text.setText('');
+                    element.button.loadTexture('grid');
+                });
+            });
+            restartBtn.scale.set(60, 30);
+            var restartText = game.add.text(
+                game.width - 10 - restartBtn.width / 2,
+                10 + restartBtn.height / 2,
+                '重开',
+                {font: '18px Arial', fill: '#fff'}
+            );
+            restartText.anchor.set(0.5);
+
 
             var gridSize = 46;
             var keySize = 46;
