@@ -85,6 +85,8 @@ define(function (require) {
     function initPuzzle(game, data, y, gridSize) {
         var x = (game.width - matrixSize * gridSize) / 2;
 
+        game.add.image(x + 3, y + 4, 'puzzle-shadow');
+
         matrix = new Matrix({
             storeKey: storeKey,
             size: matrixSize,
@@ -99,13 +101,12 @@ define(function (require) {
                 var top = y + row * gridSize;
 
                 var button = game.add.button(left, top, 'grid', onClick);
-                button.scale.set(gridSize - 1);
 
                 var text = game.add.text(
                     left + gridSize / 2,
                     top + gridSize / 2,
                     '',
-                    {font: '30px Arial', fill: '#444'}
+                    {font: 'bold 28px Arial', fill: '#f8f7f2'}
                 );
                 text.anchor.set(0.5);
 
@@ -117,8 +118,9 @@ define(function (require) {
                 return element;
             },
             dGenerator: function (col, row) {
-                var element = game.add.image(x + col * gridSize, y + row * gridSize, 'grid-disabled');
-                element.scale.set(gridSize - 1);
+                var element = game.add.image(x + (col + 0.5) * gridSize, y + (row + 0.5) * gridSize, 'grid-disabled');
+                element.anchor.set(0.5);
+                element.angle = Math.floor(Math.random() * 4) * 90;
                 return element;
             }
         });
@@ -148,6 +150,8 @@ define(function (require) {
             }
         ];
 
+        game.add.image(keyLines[0].x - keySize / 2 + 3, keyLines[0].y + 4, 'keyboard-shadow');
+
         var onClick = function () {
             var selected = matrix.getSelected();
             if (!selected || !selected.isActive()) {
@@ -174,14 +178,21 @@ define(function (require) {
                 var top = line.y;
 
                 var button = game.add.button(left, top, 'key', onClick);
-                button.scale.set(keySize);
+                // var button = game.add.button(left + 0.5 * keySize, top + 0.5 * keySize, 'key', onClick);
+                // button.anchor.set(0.5);
+                // button.angle = Math.floor(Math.random() * 4) * 90;
                 button.data = {key: key};
 
                 var text = game.add.text(
                     left + keySize / 2,
                     top + keySize / 2,
                     key,
-                    {font: '30px Arial', fill: '#eee'}
+                    {
+                        font: 'bold 26px Arial',
+                        fill: '#fff',
+                        strokeThickness: 4,
+                        stroke: '#b2a892'
+                    }
                 );
                 text.anchor.set(0.5);
             });
@@ -189,25 +200,26 @@ define(function (require) {
     }
 
     function initClue(game, y) {
-        var margin = 10;
+        var padding = 20;
         var x = 10;
-        var board = game.add.image(x, y, 'clue');
-        board.scale.set(game.width - 2 * margin, 72);
+        game.add.image(x + 3, y + 4, 'clue-shadow');
+        game.add.image(x, y, 'clue');
+
         var height = 72;
         var style = {
             font: '18px Arial',
-            fill: '#c5701b'
+            fill: '#49453d'
         };
-        clueAcross = game.add.text(x + 10, y + height * 0.3, '', style);
+        clueAcross = game.add.text(x + 20, y + height * 0.32, '', style);
         clueAcross.anchor.set(0, 0.5);
-        clueDown = game.add.text(x + 10, y + height * 0.7, '', style);
+        clueDown = game.add.text(x + 20, y + height * 0.68, '', style);
         clueDown.anchor.set(0, 0.5);
     }
 
     return {
         init: function (level) {
             levelNo = level;
-            // levelNo = 1;
+            levelNo = 1;
             storeKey = 'level-' + levelNo;
         },
         preload: function () {
@@ -217,38 +229,22 @@ define(function (require) {
             var me = this;
             var game = this.game;
 
+            game.add.image(0, 0, 'bg');
+
             var backBtn = game.add.button(10, 10, 'back', function () {
                 me.state.start('select');
             });
-            backBtn.scale.set(60, 30);
-            var backText = game.add.text(
-                10 + backBtn.width / 2,
-                10 + backBtn.height / 2,
-                '返回',
-                {font: '18px Arial', fill: '#fff'}
-            );
-            backText.anchor.set(0.5);
 
-            var restartBtn = game.add.button(game.width - 10 - 60, 10, 'back', function () {
+            var restartBtn = game.add.button(game.width - 10 - 34, 10, 'restart', function () {
                 matrix.clear(function (element) {
                     element.text.setText('');
                     element.button.loadTexture('grid');
                 });
             });
-            restartBtn.scale.set(60, 30);
-            var restartText = game.add.text(
-                game.width - 10 - restartBtn.width / 2,
-                10 + restartBtn.height / 2,
-                '重开',
-                {font: '18px Arial', fill: '#fff'}
-            );
-            restartText.anchor.set(0.5);
-
 
             var gridSize = 46;
-            var keySize = 46;
+            var keySize = 49;
 
-            // initPuzzle(game, 50 + 72 + 10, gridSize);
             fetch(game, afterFetch);
 
             initKeyboard(game, 50 + 72 + 10 + gridSize * matrixSize + 10, keySize);

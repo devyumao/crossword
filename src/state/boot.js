@@ -12,7 +12,7 @@ define(function () {
         },
         create: function () {
             // 场景设置 #FFDEBE
-            this.game.stage.backgroundColor = '#EEE';
+            this.game.stage.backgroundColor = '#fff';
 
             // 比例设置
             this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL; // 保持高宽比铺屏

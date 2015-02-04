@@ -12,6 +12,7 @@ define(function (require) {
 
             game.state.add('boot', require('./state/boot'));
             game.state.add('preload', require('./state/preload'));
+            game.state.add('menu', require('./state/menu'));
             game.state.add('select', require('./state/select'));
             game.state.add('level', require('./state/level'));
 

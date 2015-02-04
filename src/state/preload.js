@@ -10,7 +10,13 @@ define(function () {
         preload: function () {
             var game = this.game;
 
-            game.load.image('level', 'asset/img/level.png');
+            game.load.image('bg', 'asset/img/bg.png');
+            game.load.image('logo', 'asset/img/logo.png');
+            game.load.image('setting', 'asset/img/setting.png');
+
+            game.load.spritesheet('menu-btn', 'asset/img/menu-btn.png');
+
+            game.load.spritesheet('level', 'asset/img/level.png', 84, 70);
 
             game.load.image('grid', 'asset/img/grid.png');
             game.load.image('grid-disabled', 'asset/img/grid-disabled.png');
@@ -18,10 +24,17 @@ define(function () {
             game.load.image('grid-adjacent', 'asset/img/grid-adjacent.png');
             game.load.image('key', 'asset/img/key.png');
             game.load.image('clue', 'asset/img/clue.png');
+
             game.load.image('back', 'asset/img/back.png');
+            game.load.image('restart', 'asset/img/restart.png');
+
+
+            game.load.image('keyboard-shadow', 'asset/img/keyboard-shadow.png');
+            game.load.image('puzzle-shadow', 'asset/img/puzzle-shadow.png');
+            game.load.image('clue-shadow', 'asset/img/clue-shadow.png');
         },
         create: function () {
-            this.state.start('select');
+            this.state.start('menu');
         }
     };
 
