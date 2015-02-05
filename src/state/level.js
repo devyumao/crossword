@@ -219,7 +219,7 @@ define(function (require) {
     return {
         init: function (level) {
             levelNo = level;
-            levelNo = 1;
+            // levelNo = 1;
             storeKey = 'level-' + levelNo;
         },
         preload: function () {

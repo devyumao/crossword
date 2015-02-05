@@ -16,7 +16,12 @@ define(function () {
 
             game.load.spritesheet('menu-btn', 'asset/img/menu-btn.png');
 
+            // STATE select
             game.load.spritesheet('level', 'asset/img/level.png', 84, 70);
+            game.load.image('last', 'asset/img/last.png');
+            game.load.image('next', 'asset/img/next.png');
+            game.load.image('dot', 'asset/img/dot.png');
+            game.load.image('dot-current', 'asset/img/dot-current.png');
 
             game.load.image('grid', 'asset/img/grid.png');
             game.load.image('grid-disabled', 'asset/img/grid-disabled.png');
@@ -32,9 +37,11 @@ define(function () {
             game.load.image('keyboard-shadow', 'asset/img/keyboard-shadow.png');
             game.load.image('puzzle-shadow', 'asset/img/puzzle-shadow.png');
             game.load.image('clue-shadow', 'asset/img/clue-shadow.png');
+
+            game.load.image('null', 'asset/img/null.png');
         },
         create: function () {
-            this.state.start('menu');
+            this.state.start('select');
         }
     };
 

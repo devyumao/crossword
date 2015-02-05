@@ -4,17 +4,17 @@
  * @create 2015-02-04
  */
 
-define(function () {
-    
+define(function (require) {
+
+    // var transition = require('../common/transition');
+
     return {
         create: function () {
             var me = this;
             var game = this.game;
 
             game.add.image(0, 0, 'bg');
-
             game.add.image((game.width - 400) / 2,  80, 'logo');
-
             game.add.image(20, game.height - 20 - 72, 'setting');
 
             var btnStyle = {};
@@ -29,6 +29,8 @@ define(function () {
                 btnStyle.top,
                 'menu-btn',
                 function () {
+                    // transition.init(game);
+                    // transition.forward('select');
                     me.state.start('select');
                 }
             );
