@@ -8,14 +8,17 @@ define(function (require) {
 
     var Matrix = require('../common/Matrix');
     var ajax = require('../common/ajax');
+    var global = require('../common/global');
+    var Dialog = require('../ui/Dialog');
 
     // var AJAX_URL = 'http://172.18.20.85/crossword/';
     var AJAX_URL = 'http://tc-sf-tmc01.tc.baidu.com:8501/ecomui/xiaoyouxi?controller=game&action=';
 
+    var game;
     var matrixSize = 10;
     var matrix;
-    var clueAcross;
-    var clueDown;
+    var clueAcross = null;
+    var clueDown = null;
     var levelNo;
     var storeKey;
 
@@ -27,17 +30,13 @@ define(function (require) {
         grid.getElement().button.loadTexture('grid-selected');
         var clue1 = grid.getAcrossClue();
         if (clue1) {
-            clueAcross.setText('横：' + clue1);
-        }
-        else {
-            clueAcross.setText('');
+            clueAcross && clueAcross.destroy();
+            clueAcross = createClue('across', '横：' + clue1);
         }
         var clue2 = grid.getDownClue();
         if (clue2) {
-            clueDown.setText('纵：' + clue2);
-        }
-        else {
-            clueDown.setText('');
+            clueDown && clueDown.destroy();
+            clueDown = createClue('down', '竖：' + clue2);
         }
     }
 
@@ -118,7 +117,11 @@ define(function (require) {
                 return element;
             },
             dGenerator: function (col, row) {
-                var element = game.add.image(x + (col + 0.5) * gridSize, y + (row + 0.5) * gridSize, 'grid-disabled');
+                var element = game.add.image(
+                    x + (col + 0.5) * gridSize,
+                    y + (row + 0.5) * gridSize,
+                    'grid-disabled'
+                );
                 element.anchor.set(0.5);
                 element.angle = Math.floor(Math.random() * 4) * 90;
                 return element;
@@ -130,7 +133,7 @@ define(function (require) {
         });
     }
 
-    function initKeyboard(game, y, keySize) {
+    function initKeyboard(game, state, y, keySize) {
         var margin = 2;
         var keyLines = [
             {
@@ -153,6 +156,13 @@ define(function (require) {
         game.add.image(keyLines[0].x - keySize / 2 + 3, keyLines[0].y + 4, 'keyboard-shadow');
 
         var onClick = function () {
+            var beforeSolved = matrix.isSolved();
+            if (beforeSolved) { // 谜题已解决
+                return;
+            }
+
+            var beforeUnlocked = matrix.isUnlocked();
+
             var selected = matrix.getSelected();
             if (!selected || !selected.isActive()) {
                 return;
@@ -162,11 +172,47 @@ define(function (require) {
             selected.getElement().text.setText(currKey);
             selected.test(currKey, function (element, word) {
                 element.text.setText(word);
+                matrix.plusSolved(); // 临时
             });
 
             var next = matrix.next();
             if (next) {
                 matrix.select(next.getX(), next.getY(), clrRender, sltRender, ajtRender);
+            }
+
+            var dialog;
+            if (matrix.isSolved()) {
+                console.log('solved!');
+                dialog = new Dialog(game, {
+                    msg: '太棒了\n\n您已完成所有谜题！',
+                    btns: [
+                        {
+                            text: '下 一 关',
+                            onClick: function () {
+                                state.start('level', true, false, levelNo + 1);
+                            }
+                        }
+                    ]
+                });
+                dialog.show();
+            }
+            else if (!beforeUnlocked && matrix.isUnlocked()) { // 刚好达到解锁要求
+                var unlocked = global.getUnlocked();
+                console.log(levelNo, unlocked);
+                if (levelNo === unlocked) { // 当前关为最新关
+                    console.log('unlocked!');
+                    global.setUnlocked(unlocked + 1);
+
+                    dialog = new Dialog(game, {
+                        msg: '您已完成80%\n\n恭喜您成功解锁下一关！',
+                        btns: [
+                            {
+                                text: '知 道 啦'
+                            }
+                        ]
+                    });
+                    dialog.show();
+                }
             }
 
             matrix.store();
@@ -199,27 +245,49 @@ define(function (require) {
         });
     }
 
-    function initClue(game, y) {
+    function initClueBoard(game, y) {
         var padding = 20;
         var x = 10;
         game.add.image(x + 3, y + 4, 'clue-shadow');
         game.add.image(x, y, 'clue');
 
-        var height = 72;
-        var style = {
-            font: '18px Arial',
-            fill: '#49453d'
-        };
-        clueAcross = game.add.text(x + 20, y + height * 0.32, '', style);
-        clueAcross.anchor.set(0, 0.5);
-        clueDown = game.add.text(x + 20, y + height * 0.68, '', style);
-        clueDown.anchor.set(0, 0.5);
+        // var height = 72;
+        // var style = {
+        //     font: '18px Arial',
+        //     fill: '#49453d'
+        // };
+        // clueAcross = game.add.text(x + 20, y + height * 0.32, '', style);
+        // clueAcross.anchor.set(0, 0.5);
+        // clueDown = game.add.text(x + 20, y + height * 0.68, '', style);
+        // clueDown.anchor.set(0, 0.5);
     }
+
+    function createClue(type, content) {
+        var height = 72;
+        var ratio = 0.32;
+
+        var clue = game.add.text(
+            30,
+            40 + height * (type === 'across' ? ratio : (1 - ratio)),
+            content,
+            {
+                font: '18px Arial',
+                fill: '#49453d'
+            }
+        );
+
+        if (clue.width > 420) {
+            clue.width = 420;
+        }
+
+        return clue;
+    }
+
 
     return {
         init: function (level) {
             levelNo = level;
-            // levelNo = 1;
+            levelNo = 1;
             storeKey = 'level-' + levelNo;
         },
         preload: function () {
@@ -227,7 +295,7 @@ define(function (require) {
         },
         create: function () {
             var me = this;
-            var game = this.game;
+            game = this.game;
 
             game.add.image(0, 0, 'bg');
 
@@ -247,8 +315,8 @@ define(function (require) {
 
             fetch(game, afterFetch);
 
-            initKeyboard(game, 50 + 72 + 10 + gridSize * matrixSize + 10, keySize);
-            initClue(game, 50);
+            initKeyboard(game, this.state, 50 + 72 + 10 + gridSize * matrixSize + 10, keySize);
+            initClueBoard(game, 50);
         },
         update: function () {
 

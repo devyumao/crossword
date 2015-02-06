@@ -10,19 +10,25 @@ define(function () {
         preload: function () {
             var game = this.game;
 
-            game.load.image('bg', 'asset/img/bg.png');
+            // STATE menu
+            game.load.spritesheet('menu-btn', 'asset/img/menu-btn.png');
             game.load.image('logo', 'asset/img/logo.png');
             game.load.image('setting', 'asset/img/setting.png');
 
-            game.load.spritesheet('menu-btn', 'asset/img/menu-btn.png');
+            // common
+            game.load.image('bg', 'asset/img/bg.png');
+            game.load.image('dialog', 'asset/img/dialog.png');
+            game.load.image('dialog-btn', 'asset/img/dialog-btn.png');
 
             // STATE select
             game.load.spritesheet('level', 'asset/img/level.png', 84, 70);
+            game.load.image('level-locked', 'asset/img/level-locked.png');
             game.load.image('last', 'asset/img/last.png');
             game.load.image('next', 'asset/img/next.png');
             game.load.image('dot', 'asset/img/dot.png');
             game.load.image('dot-current', 'asset/img/dot-current.png');
 
+            // STATE level
             game.load.image('grid', 'asset/img/grid.png');
             game.load.image('grid-disabled', 'asset/img/grid-disabled.png');
             game.load.image('grid-selected', 'asset/img/grid-selected.png');
@@ -41,7 +47,7 @@ define(function () {
             game.load.image('null', 'asset/img/null.png');
         },
         create: function () {
-            this.state.start('select');
+            this.state.start('level');
         }
     };
 

@@ -6,6 +6,8 @@
 
 define(function (require) {
 
+    var global = require('../common/global');
+
     var game;
 
     function initLevels(options, state) {
@@ -19,36 +21,47 @@ define(function (require) {
         var left = (pageWidth - totalCol * levelSize - (totalCol - 1) * margin) / 2;
         var level = 1;
 
+        var levelGroup = game.add.group();
+        var unlocked = global.getUnlocked();
+
         var onClick = function () {
             state.start('level', true, false, this.data.level);
         };
 
-        var levelGroup = game.add.group();
-
         for (var page = 0; page < totalPage; ++page) {
             for (var i = 0, y = top; i < totalRow; ++i, y += levelSize + margin) {
                 for (var j = 0, x = page * pageWidth + left; j < totalCol; ++j, x += levelSize + margin, ++level) {
-                    var button = game.add.button(
-                        x, y,
-                        'level',
-                        onClick,
-                        null,
-                        1, 0, 1
-                    );
+                    var button;
+                    if (level <= unlocked) {
+                        button = game.add.button(
+                            x, y,
+                            'level',
+                            onClick,
+                            null,
+                            1, 0, 1
+                        );
+                        levelGroup.add(button);
+
+                        var text = game.add.text(
+                            x + button.width / 2,
+                            y + button.height / 2,
+                            level,
+                            {font: 'bold 30px Arial', fill: '#f8f7f2'}
+                        );
+                        text.anchor.set(0.5);
+                        levelGroup.add(text);
+                    }
+                    else {
+                        button = game.add.button(
+                            x, y,
+                            'level-locked'
+                        );
+                        levelGroup.add(button);
+                    }
+
                     button.data = {
                         level: level
                     };
-
-                    var text = game.add.text(
-                        x + button.width / 2,
-                        y + button.height / 2,
-                        level,
-                        {font: 'bold 30px Arial', fill: '#f8f7f2'}
-                    );
-                    text.anchor.set(0.5);
-
-                    levelGroup.add(button);
-                    levelGroup.add(text);
                 }
             }
         }
@@ -57,7 +70,7 @@ define(function (require) {
     }
 
     function Pager(options) {
-        this.page = 1;
+        this.page = options.page ? options.page : 1;
         this.totalPage = options.totalPage;
         this.lastDisabled = false;
         this.nextDisabled = false;
@@ -67,6 +80,7 @@ define(function (require) {
         
         this._initButtons();
         this._initIndicators();
+        this._adjustPage();
     }
 
     Pager.prototype._initButtons = function () {
@@ -90,7 +104,7 @@ define(function (require) {
                 me.forward();
             }
         );
-        this._refresh();
+        this._updateButtons();
     };
 
     Pager.prototype._initIndicators = function () {
@@ -99,9 +113,13 @@ define(function (require) {
         var left = (game.width - (size + margin) * this.totalPage + margin) * 0.5;
         var top = game.height - 180;
         for (var i = 0, x = left; i < this.totalPage; ++i, x += size + margin) {
-            var indicator = game.add.image(x, top, i === 0 ? 'dot-current' : 'dot');
+            var indicator = game.add.image(x, top, i === this.page - 1 ? 'dot-current' : 'dot');
             this.indicators.push(indicator);
         }
+    };
+
+    Pager.prototype._adjustPage = function () {
+        this.levels.x -= this.pageWidth * (this.page - 1);
     };
 
     Pager.prototype._translate = function (offset) {
@@ -121,9 +139,8 @@ define(function (require) {
         tween.onComplete.add(function () {
             me.lastDisabled = false;
             me.nextDisabled = false;
-            me.indicators[me.page - 1].loadTexture('dot');
-            me.indicators[(+offset < 0 ? ++me.page : --me.page) - 1].loadTexture('dot-current');
-            me._refresh();
+            me._updateIndicators(me.page, (+offset < 0 ? ++me.page : --me.page));
+            me._updateButtons();
         });
         tween.start();
     };
@@ -142,7 +159,7 @@ define(function (require) {
         this._translate(-this.pageWidth);
     };
 
-    Pager.prototype._refresh = function () {
+    Pager.prototype._updateButtons = function () {
         var last = this.last;
         var next = this.next;
         switch (this.page) {
@@ -158,6 +175,11 @@ define(function (require) {
                 this._activateLast();
                 this._activateNext();
         }
+    };
+
+    Pager.prototype._updateIndicators = function (oldPage, newPage) {
+        this.indicators[oldPage - 1].loadTexture('dot');
+        this.indicators[newPage - 1].loadTexture('dot-current');
     };
 
     Pager.prototype._disableLast = function () {
@@ -193,23 +215,24 @@ define(function (require) {
             });
 
             var totalPage = 5;
+            var totalCol = 4;
+            var totalRow = 5;
 
             var levels = initLevels(
                 {
-                    totalCol: 4,
-                    totalRow: 5,
+                    totalCol: totalCol,
+                    totalRow: totalRow,
                     totalPage: totalPage
                 },
                 this.state
             );
 
             new Pager({
+                page: Math.floor(global.getUnlocked() / (totalCol * totalRow)) + 1, // 初始为最近解锁关卡所在页
                 totalPage: totalPage,
                 levels: levels,
                 pageWidth: game.width
             });
-
-
 
             // var toucher = game.add.image(left, top, 'null');
             // toucher.scale.set(

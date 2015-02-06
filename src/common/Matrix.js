@@ -149,6 +149,9 @@ define(function () {
     };
 
     Grid.prototype.showWord = function (render) {
+        if (!this.isActive()) {
+            return;
+        }
         render(this.element, this.word);
         this.state = 'solved';
         this.display = this.word;
@@ -272,6 +275,8 @@ define(function () {
         this.currents = [];
         this.selected = null;
         this.direction = 'none';
+        this.active = 0;
+        this.solved = 0;
         this._init(this.data, options.aGenerator, options.dGenerator);
     }
 
@@ -446,6 +451,7 @@ define(function () {
             0: 'right',
             1: 'down'
         };
+
         data.forEach(function (item, index) {
             var riddle = new Riddle({
                 clue: item.clue,
@@ -476,6 +482,7 @@ define(function () {
                         direction: (i < len - 1) ? direction[orientation] : 'none'
                     });
                     me.set(x, y, grid);
+                    me.active += 1;
                 }
                 else {
                     if (orientation === 0) {
@@ -541,6 +548,7 @@ define(function () {
         });
 
         var data = {
+            solved: this.solved,
             grids: gridsAttrs,
             riddles: riddlesAttrs
         };
@@ -554,6 +562,8 @@ define(function () {
         if (!data) {
             return;
         }
+
+        this.solved = data.solved;
 
         var gridsAttrs = data.grids;
         for (var coord in gridsAttrs) {
@@ -570,6 +580,7 @@ define(function () {
         this.currents = [];
         this.selected = null;
         this.direction = 'none';
+        this.solved = 0;
 
         var grids = this.grids;
         for (var coord in grids) {
@@ -581,6 +592,18 @@ define(function () {
         });
 
         localStorage.removeItem(this.storeKey);
+    };
+
+    Matrix.prototype.plusSolved = function () {
+        ++this.solved;
+    };
+
+    Matrix.prototype.isSolved = function () {
+        return this.solved === this.active;
+    };
+
+    Matrix.prototype.isUnlocked = function () {
+        return this.solved / this.active >= 0.8;
     };
 
     return Matrix;

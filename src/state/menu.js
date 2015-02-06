@@ -8,6 +8,8 @@ define(function (require) {
 
     // var transition = require('../common/transition');
 
+    var color = require('../common/color');
+
     return {
         create: function () {
             var me = this;
@@ -40,9 +42,9 @@ define(function (require) {
                 '开 始 游 戏',
                 {
                     font: 'bold 30px Arial',
-                    fill: '#283e47',
+                    fill: color.get('dark-green'),
                     strokeThickness: 5,
-                    stroke: '#fff'
+                    stroke: color.get('white')
                 }
             );
             text1.anchor.set(0.5);
@@ -52,7 +54,7 @@ define(function (require) {
                 btnStyle.top + btnStyle.height + btnStyle.marginBottom,
                 'menu-btn',
                 function () {
-                
+                    me.state.start('level', true, false, require('../common/global').getUnlocked());
                 }
             );
             var text2 = game.add.text(
@@ -61,9 +63,9 @@ define(function (require) {
                 '继 续 游 戏',
                 {
                     font: 'bold 30px Arial',
-                    fill: '#283e47',
+                    fill: color.get('dark-green'),
                     strokeThickness: 5,
-                    stroke: '#fff'
+                    stroke: color.get('white')
                 }
             );
             text2.anchor.set(0.5);
