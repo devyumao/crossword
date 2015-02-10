@@ -4,7 +4,7 @@
  * @create 2015-02-05
  */
 
-define(function () {
+define(function (require) {
 
     var color = require('common/color');
 

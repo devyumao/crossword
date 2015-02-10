@@ -5,8 +5,10 @@
     "author": "@yumao",
     "dependencies": {},
     "devDependencies": {
-        "gulp": "^3.8.11",
-        "gulp-amd-optimizer": "^0.3.2",
-        "gulp-concat": "^2.4.3"
+        "gulp": "",
+        "gulp-amd-optimizer": "",
+        "gulp-concat": "",
+        "gulp-uglify": "",
+        "event-stream": ""
     }
 }
