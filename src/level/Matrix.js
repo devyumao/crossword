@@ -29,13 +29,14 @@ define(function () {
     }
 
     Grid.prototype.clear = function (render) {
-        if (this.state === 'disabled') {
+        if (this.isDisabled()) {
             return;
         }
+        var isSolved = this.isSolved();
         this.state = 'active';
         this.display = '';
         this.correct = false;
-        render(this.element);
+        render(this.element, isSolved);
     };
 
     Grid.prototype.getAttrs = function () {
@@ -57,7 +58,7 @@ define(function () {
         this.state = attrs.state;
         this.display = attrs.display;
         this.correct = attrs.correct;
-        render(this.element, this.display);
+        render(this.element, this.display, this.isSolved());
     };
 
     Grid.prototype.getElement = function () {
@@ -390,7 +391,7 @@ define(function () {
         if (!curr) {
             return null;
         }
-        console.log(curr);
+        // console.log(curr);
         var next = null;
         var right = this.right(x, y);
         var down = this.down(x, y);
@@ -399,9 +400,6 @@ define(function () {
                 this.direction = 'none';
                 break;
             case 'right':
-                // if (!right.isActive()) {
-                //     this.direction = 'none';
-                // }
                 if (!curr.isSolved()
                     && this.direction === 'down'
                     && (!down || !down.isActive())) {
@@ -411,13 +409,9 @@ define(function () {
                 }
                 break;
             case 'down':
-                // if (!down.isActive()) {
-                //     this.direction = 'none';
-                // }
                 if (!curr.isSolved()
                     && this.direction === 'right'
                     && (!right || !right.isActive())) {
-                    // this.direction = 'none';
                 }
                 else {
                     next = this.goDown(x, y);

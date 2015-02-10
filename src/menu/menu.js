@@ -6,13 +6,13 @@
 
 define(function (require) {
 
-    // var transition = require('../common/transition');
+    // var transition = require('common/transition');
 
-    var color = require('../common/color');
+    var color = require('common/color');
+    var global = require('common/global');
 
     return {
         create: function () {
-            var me = this;
             var game = this.game;
 
             game.add.image(0, 0, 'bg');
@@ -26,6 +26,14 @@ define(function (require) {
             btnStyle.top = 300;
             btnStyle.marginBottom = 20;
 
+            var textStyle = {
+                font: 'bold 28px ' + global.chFont,
+                fill: color.get('dark-green'),
+                strokeThickness: 5,
+                stroke: color.get('white')
+            };
+
+            // TODO: menu buttons 对象化
             var btn1 = game.add.button(
                 btnStyle.left,
                 btnStyle.top,
@@ -33,19 +41,16 @@ define(function (require) {
                 function () {
                     // transition.init(game);
                     // transition.forward('select');
-                    me.state.start('select');
-                }
+                    this.state.start('select');
+                },
+                this,
+                0, 0, 1
             );
             var text1 = game.add.text(
                 btn1.x + btn1.width / 2,
                 btn1.y + btn1.height / 2 - 5,
                 '开 始 游 戏',
-                {
-                    font: 'bold 30px Arial',
-                    fill: color.get('dark-green'),
-                    strokeThickness: 5,
-                    stroke: color.get('white')
-                }
+                textStyle
             );
             text1.anchor.set(0.5);
 
@@ -54,19 +59,16 @@ define(function (require) {
                 btnStyle.top + btnStyle.height + btnStyle.marginBottom,
                 'menu-btn',
                 function () {
-                    me.state.start('level', true, false, require('../common/global').getUnlocked());
-                }
+                    this.state.start('level', true, false, require('common/global').getUnlocked());
+                },
+                this,
+                0, 0, 1
             );
             var text2 = game.add.text(
                 btn2.x + btn2.width / 2,
                 btn2.y + btn2.height / 2 - 5,
                 '继 续 游 戏',
-                {
-                    font: 'bold 30px Arial',
-                    fill: color.get('dark-green'),
-                    strokeThickness: 5,
-                    stroke: color.get('white')
-                }
+                textStyle
             );
             text2.anchor.set(0.5);
         }

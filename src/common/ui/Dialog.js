@@ -7,12 +7,11 @@
 
 define(function (require) {
 
-    var color = require('../common/color');
+    var color = require('common/color');
+    var global = require('common/global');
 
     function Dialog(game, options) {
         this.game = game;
-        this.buttons = [];
-
         this._init(options);
     }
 
@@ -27,6 +26,7 @@ define(function (require) {
         var mask = game.add.image(0, 0, 'null');
         mask.scale.set(game.width, game.height);
         mask.alpha = 0;
+        mask.inputEnabled = true;
         this.mask = mask;
     };
 
@@ -41,61 +41,57 @@ define(function (require) {
         this.body = body;
 
         var msg = game.add.text(
-            left,
-            top + 275 - 320,
+            0, 275 - 320,
             msgText,
             {
-                font: 'bold 24px Arial',
+                font: 'bold 24px ' + global.chFont,
                 fill: color.get('dark-green'),
                 align: 'center'
             }
         );
         msg.anchor.set(0.5);
-        this.msg = msg;
 
-        this.group = game.add.group();
-        this.group.add(body);
-        this.group.add(msg);
+        this.body.addChild(msg);
     };
 
     Dialog.prototype._initBtns = function (btns) {
         var me = this;
         var game = this.game;
         var left = game.width * 0.5;
-        var top = 400 - 320 - 173;
+        var top = 400 - 320;
         btns.forEach(function (btnData, index) {
             var button = game.add.button(
-                left,
-                top + 100 * index,
+                0, top + 100 * index,
                 'dialog-btn',
                 btnData.onClick
                     ? btnData.onClick
                     : function () {
                         me.hide();
-                    }
+                    },
+                null,
+                0, 0, 1
             );
             button.anchor.set(0.5);
-            me.group.add(button);
+            me.body.addChild(button);
 
             var text = game.add.text(
-                left,
-                top - 3 + 100 * index,
+                0, top - 3 + 100 * index,
                 btnData.text,
                 {
-                    font: 'bold 30px Arial',
+                    font: 'bold 28px ' + global.chFont,
                     fill: color.get('dark-green'),
                     strokeThickness: 5,
                     stroke: color.get('white')
                 }
             );
             text.anchor.set(0.5);
-            me.group.add(text);
-
-            me.buttons.push({
-                button: button,
-                text: text
-            });
+            me.body.addChild(text);
         });
+    };
+
+    Dialog.prototype._destroy = function () {
+        this.mask.destroy();
+        this.body.destroy();
     };
 
     Dialog.prototype.show = function () {
@@ -104,7 +100,7 @@ define(function (require) {
         var tweenMask = game.add.tween(this.mask)
             .to({alpha: 0.7}, 500, Phaser.Easing.Quadratic.InOut);
 
-        var tweenEntity = game.add.tween(this.group)
+        var tweenEntity = game.add.tween(this.body)
             .to({y: '+500'}, 500, Phaser.Easing.Back.Out);
 
         tweenMask.chain(tweenEntity);
@@ -112,18 +108,20 @@ define(function (require) {
     };
 
     Dialog.prototype.hide = function () {
+        var me = this;
         var game = this.game;
 
-        var tweenEntity = game.add.tween(this.group)
+        var tweenEntity = game.add.tween(this.body)
             .to({y: '-500'}, 500, Phaser.Easing.Back.In);
 
         var tweenMask = game.add.tween(this.mask)
             .to({alpha: 0}, 500, Phaser.Easing.Quadratic.InOut);
+        tweenMask.onComplete.add(function () {
+            me._destroy();
+        });
 
         tweenEntity.chain(tweenMask);
         tweenEntity.start();
-
-        // TODO: 销毁元素
     };
 
     return Dialog;

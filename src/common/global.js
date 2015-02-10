@@ -6,8 +6,21 @@
 
 define(function () {
 
+    var color = require('common/color');
+
+    var chFont = 'Microsoft Yahei';
+    var enFont = 'Arial';
+
     var unlocked = localStorage.getItem('unlocked');
     unlocked = unlocked ? +unlocked : 1;
+
+    var solvedsObj = {};
+    var solveds = localStorage.getItem('solveds');
+    if (solveds) {
+        solveds.split(',').forEach(function (level) {
+            solvedsObj[level] = true;
+        });
+    }
 
     return {
         getUnlocked: function () {
@@ -17,6 +30,31 @@ define(function () {
         setUnlocked: function (num) {
             unlocked = num;
             localStorage.setItem('unlocked', unlocked);
+        },
+
+        getSolveds: function () {
+            return solvedsObj;
+        },
+
+        addSolved: function (level) {
+            solvedsObj[level] = true;
+            var solveds = [];
+            for (var l in solvedsObj) {
+                if (solvedsObj.hasOwnProperty(l) && solvedsObj[l]) {
+                    solveds.push(l);
+                }
+            }
+            localStorage.setItem('solveds', solveds.join(','));
+        },
+
+        chFont: chFont,
+        enFont: enFont,
+
+        titleStyle: {
+            font: '28px ' + chFont,
+            fill: color.get('bg'),
+            strokeThickness: 5,
+            stroke: color.get('dark-glaze')
         }
     };
 

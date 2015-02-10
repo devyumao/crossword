@@ -4,15 +4,12 @@
  * @create 2015-01-25
  */
 
-define(function () {
+define(function (require) {
     
     return {
-        preload: function () {
-
-        },
         create: function () {
             // 场景设置 #FFDEBE
-            this.game.stage.backgroundColor = '#fff';
+            this.game.stage.backgroundColor = require('common/color').get('bg');
 
             // 比例设置
             this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL; // 保持高宽比铺屏

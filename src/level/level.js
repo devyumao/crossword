@@ -6,21 +6,34 @@
 
 define(function (require) {
 
-    var Matrix = require('../common/Matrix');
-    var ajax = require('../common/ajax');
-    var global = require('../common/global');
-    var Dialog = require('../ui/Dialog');
+    var Matrix = require('./Matrix');
+    var ajax = require('common/ajax');
+    var global = require('common/global');
+    var color = require('common/color');
+    var Dialog = require('common/ui/Dialog');
 
     // var AJAX_URL = 'http://172.18.20.85/crossword/';
     var AJAX_URL = 'http://tc-sf-tmc01.tc.baidu.com:8501/ecomui/xiaoyouxi?controller=game&action=';
 
     var game;
     var matrixSize = 10;
+    var gridSize = 46;
     var matrix;
     var clueAcross = null;
     var clueDown = null;
     var levelNo;
-    var storeKey;
+    var levelDataKey;
+
+    function setFontLang(text, lang) {
+        if (lang === 'en') {
+            text.font = global.enFont;
+            text.fontSize += 2;
+        }
+        else {
+            text.font = global.chFont;
+            text.fontSize -= 2;
+        }
+    }
 
     function clrRender(grid) {
         grid.getElement().button.loadTexture('grid');
@@ -44,22 +57,23 @@ define(function (require) {
         grid.getElement().button.loadTexture('grid-adjacent');
     }
 
-    function fetch(game, handler) {
-        ajax.get({
-            url: AJAX_URL + 'guess',
-            data: {
-                index: levelNo
-            },
-            success: function (res) {
-                res = JSON.parse(res);
-                afterFetch(game, res.tableList);
-            }
-        });
-    }
-
-    function afterFetch(game, data) {
-        data = preprocessData(data);
-        initPuzzle(game, data, 50 + 72 + 10, 46);
+    function fetch(handler) {
+        var localData = localStorage.getItem(levelDataKey);
+        if (localData) {
+            initPuzzle(JSON.parse(localData));
+        }
+        else {
+            ajax.get({
+                url: AJAX_URL + 'guess',
+                data: {
+                    index: levelNo
+                },
+                success: function (res) {
+                    res = JSON.parse(res);
+                    initPuzzle(preprocessData(res.tableList));
+                }
+            });
+        }
     }
 
     function preprocessData(data) {
@@ -78,16 +92,18 @@ define(function (require) {
                 });
             });
         }
+        localStorage.setItem(levelDataKey, JSON.stringify(newData));
         return newData;
     }
 
-    function initPuzzle(game, data, y, gridSize) {
+    function initPuzzle(data) {
         var x = (game.width - matrixSize * gridSize) / 2;
+        var y = 132;
 
         game.add.image(x + 3, y + 4, 'puzzle-shadow');
 
         matrix = new Matrix({
-            storeKey: storeKey,
+            storeKey: 'level-state-' + levelNo,
             size: matrixSize,
             data: data,
             aGenerator: function (col, row) {
@@ -99,15 +115,21 @@ define(function (require) {
                 var left = x + col * gridSize;
                 var top = y + row * gridSize;
 
-                var button = game.add.button(left, top, 'grid', onClick);
+                var button = game.add.button(left, top, 'grid', onClick, null, 0, 0, 1);
 
                 var text = game.add.text(
                     left + gridSize / 2,
-                    top + gridSize / 2,
+                    top + gridSize / 2 - 1,
                     '',
-                    {font: 'bold 28px Arial', fill: '#f8f7f2'}
+                    {
+                        fill: color.get('white')
+                    }
                 );
+                text.fontSize = 28;
+                text.fontWeight = 'bold';
+                text.font = global.enFont;
                 text.anchor.set(0.5);
+                text.alpha = 0.85;
 
                 var element = {
                     button: button,
@@ -128,12 +150,16 @@ define(function (require) {
             }
         });
 
-        matrix.retrive(function (element, display) {
-            element.text.setText(display);
+        matrix.retrive(function (element, display, isSolved) {
+            var text = element.text;
+            isSolved && setFontLang(text, 'ch');
+            text.setText(display);
         });
     }
 
-    function initKeyboard(game, state, y, keySize) {
+    function initKeyboard(state) {
+        var y = 132 + gridSize * matrixSize + 10;
+        var keySize = 49;
         var margin = 2;
         var keyLines = [
             {
@@ -171,7 +197,19 @@ define(function (require) {
             var currKey = this.data.key;
             selected.getElement().text.setText(currKey);
             selected.test(currKey, function (element, word) {
-                element.text.setText(word);
+                var text = element.text;
+                var hide = game.add.tween(text.scale)
+                    .to({x: 0, y: 0}, 500, Phaser.Easing.Back.In, false);
+                var show = game.add.tween(text.scale)
+                    .to({x: 1, y: 1}, 500, Phaser.Easing.Back.Out, false);
+                hide.onComplete.add(function () {
+                    setFontLang(text, 'ch');
+                    text.setText(word);
+                });
+
+                hide.chain(show);
+                hide.start();
+                
                 matrix.plusSolved(); // 临时
             });
 
@@ -183,6 +221,8 @@ define(function (require) {
             var dialog;
             if (matrix.isSolved()) {
                 console.log('solved!');
+                global.addSolved(levelNo);
+
                 dialog = new Dialog(game, {
                     msg: '太棒了\n\n您已完成所有谜题！',
                     btns: [
@@ -198,7 +238,6 @@ define(function (require) {
             }
             else if (!beforeUnlocked && matrix.isUnlocked()) { // 刚好达到解锁要求
                 var unlocked = global.getUnlocked();
-                console.log(levelNo, unlocked);
                 if (levelNo === unlocked) { // 当前关为最新关
                     console.log('unlocked!');
                     global.setUnlocked(unlocked + 1);
@@ -223,10 +262,7 @@ define(function (require) {
                 var left = line.x + (keySize + margin) * index;
                 var top = line.y;
 
-                var button = game.add.button(left, top, 'key', onClick);
-                // var button = game.add.button(left + 0.5 * keySize, top + 0.5 * keySize, 'key', onClick);
-                // button.anchor.set(0.5);
-                // button.angle = Math.floor(Math.random() * 4) * 90;
+                var button = game.add.button(left, top, 'key', onClick, null, 0, 0, 1);
                 button.data = {key: key};
 
                 var text = game.add.text(
@@ -234,10 +270,10 @@ define(function (require) {
                     top + keySize / 2,
                     key,
                     {
-                        font: 'bold 26px Arial',
-                        fill: '#fff',
+                        font: 'bold 26px ' + global.enFont,
+                        fill: color.get('white'),
                         strokeThickness: 4,
-                        stroke: '#b2a892'
+                        stroke: color.get('dark-glaze')
                     }
                 );
                 text.anchor.set(0.5);
@@ -245,34 +281,25 @@ define(function (require) {
         });
     }
 
-    function initClueBoard(game, y) {
+    function initClueBoard() {
         var padding = 20;
         var x = 10;
+        var y = 50;
         game.add.image(x + 3, y + 4, 'clue-shadow');
         game.add.image(x, y, 'clue');
-
-        // var height = 72;
-        // var style = {
-        //     font: '18px Arial',
-        //     fill: '#49453d'
-        // };
-        // clueAcross = game.add.text(x + 20, y + height * 0.32, '', style);
-        // clueAcross.anchor.set(0, 0.5);
-        // clueDown = game.add.text(x + 20, y + height * 0.68, '', style);
-        // clueDown.anchor.set(0, 0.5);
     }
 
     function createClue(type, content) {
         var height = 72;
-        var ratio = 0.32;
+        var ratio = 0.34;
 
         var clue = game.add.text(
             30,
             40 + height * (type === 'across' ? ratio : (1 - ratio)),
             content,
             {
-                font: '18px Arial',
-                fill: '#49453d'
+                font: '16px ' + global.chFont,
+                fill: color.get('dark-green')
             }
         );
 
@@ -287,42 +314,52 @@ define(function (require) {
     return {
         init: function (level) {
             levelNo = level;
-            levelNo = 1;
-            storeKey = 'level-' + levelNo;
-        },
-        preload: function () {
-        
+            // levelNo = 1;
+            levelDataKey = 'level-data-' + levelNo;
         },
         create: function () {
-            var me = this;
             game = this.game;
 
             game.add.image(0, 0, 'bg');
 
-            var backBtn = game.add.button(10, 10, 'back', function () {
-                me.state.start('select');
-            });
+            var title = game.add.text(
+                game.width * 0.5, 6,
+                '第 ' + levelNo + ' 关',
+                global.titleStyle
+            );
+            title.anchor.set(0.5, 0);
 
-            var restartBtn = game.add.button(game.width - 10 - 34, 10, 'restart', function () {
-                matrix.clear(function (element) {
-                    element.text.setText('');
-                    element.button.loadTexture('grid');
-                });
-            });
+            var backBtn = game.add.button(
+                10, 10,
+                'back',
+                function () {
+                    this.state.start('select');
+                },
+                this,
+                0, 0, 1
+            );
 
-            var gridSize = 46;
-            var keySize = 49;
+            var restartBtn = game.add.button(
+                game.width - 10 - 34, 10,
+                'restart',
+                function () {
+                    matrix.clear(function (element, isSolved) {
+                        var text = element.text;
+                        text.setText('');
+                        isSolved && setFontLang(text, 'en');
+                        element.button.loadTexture('grid');
+                    });
+                },
+                this,
+                0, 0, 1
+            );
 
-            fetch(game, afterFetch);
+            fetch();
 
-            initKeyboard(game, this.state, 50 + 72 + 10 + gridSize * matrixSize + 10, keySize);
-            initClueBoard(game, 50);
-        },
-        update: function () {
+            initKeyboard(this.state);
+            initClueBoard();
 
-        },
-        render: function () {
-
+            // global.addSolved(levelNo);
         }
     };
 
