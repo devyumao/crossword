@@ -157,7 +157,7 @@ define(function (require) {
         });
     }
 
-    function initKeyboard(state) {
+    function initKeyboard() {
         var y = 132 + gridSize * matrixSize + 10;
         var keySize = 49;
         var margin = 2;
@@ -229,7 +229,7 @@ define(function (require) {
                         {
                             text: '下 一 关',
                             onClick: function () {
-                                state.start('level', true, false, levelNo + 1);
+                                game.stateTransition.forward('level', true, false, levelNo + 1);
                             }
                         }
                     ]
@@ -333,7 +333,7 @@ define(function (require) {
                 10, 10,
                 'back',
                 function () {
-                    this.state.start('select');
+                    game.stateTransition.back('select');
                 },
                 this,
                 0, 0, 1
@@ -356,7 +356,7 @@ define(function (require) {
 
             fetch();
 
-            initKeyboard(this.state);
+            initKeyboard();
             initClueBoard();
 
             // global.addSolved(levelNo);

@@ -15,7 +15,8 @@ var options = {
 function depScript() {
     return gulp.src([
         'dep/esl.js',
-        'dep/phaser.min.js'
+        'dep/phaser.min.js',
+        'dep/phaser-state-transition.min.js'
     ]);
 }
 

@@ -11,7 +11,7 @@ define(function (require) {
 
     var game;
 
-    function initLevels(options, state) {
+    function initLevels(options) {
         var totalCol = options.totalCol;
         var totalRow = options.totalRow;
         var totalPage = options.totalPage;
@@ -28,7 +28,7 @@ define(function (require) {
         var solveds = global.getSolveds();
 
         var onClick = function () {
-            state.start('level', true, false, this.data.level);
+            game.stateTransition.forward('level', true, false, this.data.level);
         };
 
         for (var page = 0; page < totalPage; ++page) {
@@ -93,7 +93,7 @@ define(function (require) {
                 10, 10,
                 'back',
                 function () {
-                    this.state.start('menu');
+                    game.stateTransition.back('menu');
                 },
                 this,
                 0, 0, 1
@@ -103,14 +103,11 @@ define(function (require) {
             var totalCol = 4;
             var totalRow = 5;
 
-            var levels = initLevels(
-                {
-                    totalCol: totalCol,
-                    totalRow: totalRow,
-                    totalPage: totalPage
-                },
-                this.state
-            );
+            var levels = initLevels({
+                totalCol: totalCol,
+                totalRow: totalRow,
+                totalPage: totalPage
+            });
 
             var Pager = require('./Pager');
             new Pager(game, {

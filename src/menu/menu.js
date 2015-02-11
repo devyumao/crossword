@@ -6,8 +6,6 @@
 
 define(function (require) {
 
-    // var transition = require('common/transition');
-
     var color = require('common/color');
     var global = require('common/global');
 
@@ -39,9 +37,7 @@ define(function (require) {
                 btnStyle.top,
                 'menu-btn',
                 function () {
-                    // transition.init(game);
-                    // transition.forward('select');
-                    this.state.start('select');
+                    game.stateTransition.forward('select');
                 },
                 this,
                 0, 0, 1
@@ -59,7 +55,7 @@ define(function (require) {
                 btnStyle.top + btnStyle.height + btnStyle.marginBottom,
                 'menu-btn',
                 function () {
-                    this.state.start('level', true, false, require('common/global').getUnlocked());
+                    game.stateTransition.forward('level', true, false, require('common/global').getUnlocked());
                 },
                 this,
                 0, 0, 1

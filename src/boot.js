@@ -17,6 +17,10 @@ define(function (require) {
             this.scale.pageAlignVertically = true;
             // this.scale.setScreenSize(true); // 铺屏
 
+            // 初始化转场
+            var StateTransition = require('common/stateTransition');
+            this.game.stateTransition = new StateTransition(this.game);
+
             this.state.start('preload');
         }
     };
