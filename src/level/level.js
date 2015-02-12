@@ -69,8 +69,14 @@ define(function (require) {
                     index: levelNo
                 },
                 success: function (res) {
-                    res = JSON.parse(res);
-                    initPuzzle(preprocessData(res.tableList));
+                    var timer = game.time.create();
+                    // 延迟加载，防止面板压住过场
+                    // TODO: better solution
+                    timer.add(500, function () {
+                        res = JSON.parse(res);
+                        initPuzzle(preprocessData(res.tableList));
+                    });
+                    timer.start();
                 }
             });
         }
