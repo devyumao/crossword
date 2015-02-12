@@ -38,7 +38,7 @@ gulp.task('clean:image', function () {
 });
 
 gulp.task('image', function () {
-    return gulp.src(['img/*.png', '!img/psd'])
+    return gulp.src(['img/*.png', 'img/*.ico', '!img/psd'])
         .pipe(gulp.dest('dist/img'));
 });
 

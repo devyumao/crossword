@@ -125,7 +125,7 @@ define(function (require) {
 
                 var text = game.add.text(
                     left + gridSize / 2,
-                    top + gridSize / 2 - 1,
+                    top + gridSize / 2 + 2,
                     '',
                     {
                         fill: color.get('white')
@@ -273,7 +273,7 @@ define(function (require) {
 
                 var text = game.add.text(
                     left + keySize / 2,
-                    top + keySize / 2,
+                    top + keySize / 2 + 3,
                     key,
                     {
                         font: 'bold 26px ' + global.enFont,
@@ -301,7 +301,7 @@ define(function (require) {
 
         var clue = game.add.text(
             30,
-            40 + height * (type === 'across' ? ratio : (1 - ratio)),
+            38 + height * (type === 'across' ? ratio : (1 - ratio)),
             content,
             {
                 font: '16px ' + global.chFont,

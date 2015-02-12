@@ -44,7 +44,7 @@ define(function (require) {
             );
             var text1 = game.add.text(
                 btn1.x + btn1.width / 2,
-                btn1.y + btn1.height / 2 - 5,
+                btn1.y + btn1.height / 2 - 2,
                 '开 始 游 戏',
                 textStyle
             );
@@ -62,7 +62,7 @@ define(function (require) {
             );
             var text2 = game.add.text(
                 btn2.x + btn2.width / 2,
-                btn2.y + btn2.height / 2 - 5,
+                btn2.y + btn2.height / 2 - 2,
                 '继 续 游 戏',
                 textStyle
             );
