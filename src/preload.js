@@ -29,7 +29,7 @@ define(function (require) {
             // STATE menu
             game.load.spritesheet('menu-btn', 'img/menu-btn.png', 234, 80);
             game.load.image('logo', 'img/logo.png');
-            game.load.image('setting', 'img/setting.png');
+            // game.load.image('setting', 'img/setting.png');
 
             // STATE select
             game.load.spritesheet('level', 'img/level.png', 84, 70);

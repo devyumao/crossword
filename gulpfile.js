@@ -3,6 +3,7 @@ var amdOptimizer = require('gulp-amd-optimizer');
 var concat = require('gulp-concat');
 var uglify = require('gulp-uglify');
 var eventStream = require('event-stream');
+var del = require('del');
 
 var requireConfig = {
     baseUrl: 'src'
@@ -32,6 +33,10 @@ gulp.task('script', function () {
         .pipe(gulp.dest('dist/js'));
 });
 
+gulp.task('clean:image', function () {
+    del.sync(['dist/img/*.png']);
+});
+
 gulp.task('image', function () {
     return gulp.src(['img/*.png', '!img/psd'])
         .pipe(gulp.dest('dist/img'));
@@ -39,5 +44,6 @@ gulp.task('image', function () {
 
 gulp.task('default', [
     'script',
+    'clean:image',
     'image'
 ]);

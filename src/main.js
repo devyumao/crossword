@@ -17,8 +17,6 @@ define(function (require) {
             game.state.add('level', require('level/level'));
 
             game.state.start('boot');
-
-            require('weixin');
         }
     };
 

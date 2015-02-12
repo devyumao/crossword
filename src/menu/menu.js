@@ -15,7 +15,7 @@ define(function (require) {
 
             game.add.image(0, 0, 'bg');
             game.add.image((game.width - 400) / 2,  80, 'logo');
-            game.add.image(20, game.height - 20 - 72, 'setting');
+            // game.add.image(20, game.height - 20 - 72, 'setting');
 
             var btnStyle = {};
             btnStyle.width = 234;
