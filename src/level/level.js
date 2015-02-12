@@ -12,8 +12,8 @@ define(function (require) {
     var color = require('common/color');
     var Dialog = require('common/ui/Dialog');
 
-    // var AJAX_URL = 'http://172.18.20.85/crossword/';
-    var AJAX_URL = 'http://tc-sf-tmc01.tc.baidu.com:8501/ecomui/xiaoyouxi?controller=game&action=';
+    // var AJAX_URL = 'http://tc-sf-tmc01.tc.baidu.com:8501/ecomui/xiaoyouxi?controller=game&action=';
+    var AJAX_URL = 'http://121.40.104.68/ecomui/xiaoyouxi?controller=game&action=';
 
     var game;
     var matrixSize = 10;
