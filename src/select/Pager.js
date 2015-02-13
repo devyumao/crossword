@@ -25,7 +25,7 @@ define(function () {
         var game = this.game;
         var width = 74;
         var margin = 15;
-        var top = game.height - 130;
+        var top = game.height - 120;
         this.last = game.add.button(
             game.width / 2 - width - margin,
             top,
@@ -54,7 +54,7 @@ define(function () {
         var size = 16;
         var margin = 18;
         var left = (game.width - (size + margin) * this.totalPage + margin) * 0.5;
-        var top = game.height - 180;
+        var top = game.height - 175;
         for (var i = 0, x = left; i < this.totalPage; ++i, x += size + margin) {
             var indicator = game.add.image(x, top, i === this.page - 1 ? 'dot-current' : 'dot');
             this.indicators.push(indicator);

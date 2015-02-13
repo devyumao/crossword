@@ -83,14 +83,14 @@ define(function (require) {
             game.add.image(0, 0, 'bg');
 
             var title = game.add.text(
-                game.width * 0.5, 8,
+                game.width * 0.5, 16,
                 '选 择 关 卡',
                 global.titleStyle
             );
             title.anchor.set(0.5, 0);
 
             var backBtn = game.add.button(
-                10, 10,
+                10, 20,
                 'back',
                 function () {
                     game.stateTransition.back('menu');

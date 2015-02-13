@@ -14,14 +14,14 @@ define(function (require) {
             var game = this.game;
 
             game.add.image(0, 0, 'bg');
-            game.add.image((game.width - 400) / 2,  80, 'logo');
+            game.add.image((game.width - 400) / 2,  90, 'logo');
             // game.add.image(20, game.height - 20 - 72, 'setting');
 
             var btnStyle = {};
             btnStyle.width = 234;
             btnStyle.height = 80;
             btnStyle.left = (game.width - btnStyle.width) / 2;
-            btnStyle.top = 300;
+            btnStyle.top = 310;
             btnStyle.marginBottom = 20;
 
             var textStyle = {

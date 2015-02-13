@@ -104,7 +104,7 @@ define(function (require) {
 
     function initPuzzle(data) {
         var x = (game.width - matrixSize * gridSize) / 2;
-        var y = 132;
+        var y = 142;
 
         game.add.image(x + 3, y + 4, 'puzzle-shadow');
 
@@ -164,7 +164,7 @@ define(function (require) {
     }
 
     function initKeyboard() {
-        var y = 132 + gridSize * matrixSize + 10;
+        var y = 142 + gridSize * matrixSize + 10;
         var keySize = 49;
         var margin = 2;
         var keyLines = [
@@ -290,7 +290,7 @@ define(function (require) {
     function initClueBoard() {
         var padding = 20;
         var x = 10;
-        var y = 50;
+        var y = 60;
         game.add.image(x + 3, y + 4, 'clue-shadow');
         game.add.image(x, y, 'clue');
     }
@@ -301,7 +301,7 @@ define(function (require) {
 
         var clue = game.add.text(
             30,
-            38 + height * (type === 'across' ? ratio : (1 - ratio)),
+            48 + height * (type === 'across' ? ratio : (1 - ratio)),
             content,
             {
                 font: '16px ' + global.chFont,
@@ -329,14 +329,14 @@ define(function (require) {
             game.add.image(0, 0, 'bg');
 
             var title = game.add.text(
-                game.width * 0.5, 6,
+                game.width * 0.5, 16,
                 '第 ' + levelNo + ' 关',
                 global.titleStyle
             );
             title.anchor.set(0.5, 0);
 
             var backBtn = game.add.button(
-                10, 10,
+                10, 20,
                 'back',
                 function () {
                     game.stateTransition.back('select');
@@ -346,7 +346,7 @@ define(function (require) {
             );
 
             var restartBtn = game.add.button(
-                game.width - 10 - 34, 10,
+                game.width - 10 - 34, 20,
                 'restart',
                 function () {
                     matrix.clear(function (element, isSolved) {
