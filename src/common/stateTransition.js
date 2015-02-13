@@ -14,7 +14,7 @@ define(function (require) {
     stateTransition.prototype._to = function (properties, state, clearWorld, clearCache, parameter) {
         var transition = this.transition;
         transition.configure({
-            duration: 500,
+            duration: 300,
             ease: Phaser.Easing.Exponential.In,
             properties: properties
         });

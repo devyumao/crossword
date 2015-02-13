@@ -72,7 +72,7 @@ define(function (require) {
                     var timer = game.time.create();
                     // 延迟加载，防止面板压住过场
                     // TODO: better solution
-                    timer.add(500, function () {
+                    timer.add(300, function () {
                         res = JSON.parse(res);
                         initPuzzle(preprocessData(res.tableList));
                     });
