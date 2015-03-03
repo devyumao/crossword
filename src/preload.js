@@ -60,7 +60,7 @@ define(function (require) {
             game.load.image('null', 'img/null.png');
         },
         create: function () {
-            this.state.start('menu');
+            this.state.start('select');
         }
     };
 
