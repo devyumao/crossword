@@ -333,7 +333,7 @@ define(function (require) {
     return {
         init: function (level) {
             levelNo = level;
-            levelNo = 1;
+            // levelNo = 1;
             levelDataKey = 'level-data-' + levelNo;
         },
         create: function () {
