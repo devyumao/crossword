@@ -25,6 +25,7 @@ define(function (require) {
             game.load.spritesheet('back', 'img/back.png', 35, 38);
             game.load.image('dialog', 'img/dialog.png');
             game.load.spritesheet('dialog-btn', 'img/dialog-btn.png', 222, 80);
+            game.load.spritesheet('dialog-btn-sm', 'img/dialog-btn-sm.png', 83, 80);
 
             // STATE menu
             game.load.spritesheet('menu-btn', 'img/menu-btn.png', 234, 80);
@@ -49,6 +50,8 @@ define(function (require) {
             game.load.spritesheet('key', 'img/key.png', 49, 49);
             game.load.image('clue', 'img/clue.png');
             game.load.spritesheet('restart', 'img/restart.png', 37, 38);
+            game.load.spritesheet('bulb', 'img/bulb.png', 36, 50);
+            game.load.spritesheet('coincard', 'img/coincard.png', 83, 42);
 
             game.load.image('keyboard-shadow', 'img/keyboard-shadow.png');
             game.load.image('puzzle-shadow', 'img/puzzle-shadow.png');
@@ -57,7 +60,7 @@ define(function (require) {
             game.load.image('null', 'img/null.png');
         },
         create: function () {
-            this.state.start('menu');
+            this.state.start('level');
         }
     };
 

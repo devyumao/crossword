@@ -8,7 +8,7 @@ define(function (require) {
     
     return {
         create: function () {
-            // 场景设置 #FFDEBE
+            // 场景设置
             this.game.stage.backgroundColor = require('common/color').get('bg');
 
             // 比例设置

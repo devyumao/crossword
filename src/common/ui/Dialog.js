@@ -57,36 +57,71 @@ define(function (require) {
     Dialog.prototype._initBtns = function (btns) {
         var me = this;
         var game = this.game;
-        var left = game.width * 0.5;
+        // var left = game.width * 0.5;
         var top = 400 - 320;
-        btns.forEach(function (btnData, index) {
-            var button = game.add.button(
-                0, top + 100 * index,
-                'dialog-btn',
-                btnData.onClick
-                    ? btnData.onClick
-                    : function () {
-                        me.hide();
-                    },
-                null,
-                0, 0, 1
-            );
-            button.anchor.set(0.5);
-            me.body.addChild(button);
+        switch (btns.length) {
+            case 1:
+                var btnData = btns[0];
+                var button = game.add.button(
+                    0, top,
+                    'dialog-btn',
+                    btnData.onClick
+                        ? btnData.onClick
+                        : function () {
+                            me.hide();
+                        },
+                    null,
+                    0, 0, 1
+                );
+                button.anchor.set(0.5);
+                me.body.addChild(button);
 
-            var text = game.add.text(
-                0, top - 3 + 100 * index,
-                btnData.text,
-                {
-                    font: 'bold 28px ' + global.chFont,
-                    fill: color.get('dark-green'),
-                    strokeThickness: 5,
-                    stroke: color.get('white')
-                }
-            );
-            text.anchor.set(0.5);
-            me.body.addChild(text);
-        });
+                var text = game.add.text(
+                    0, top - 3,
+                    btnData.text,
+                    {
+                        font: 'bold 28px ' + global.chFont,
+                        fill: color.get('dark-green'),
+                        strokeThickness: 5,
+                        stroke: color.get('white')
+                    }
+                );
+                text.anchor.set(0.5);
+                me.body.addChild(text);
+                break;
+            case 2:
+                btns.forEach(function (btnData, index) {
+                    var offset = 60;
+                    var left = -offset + index * offset * 2;
+                    var button = game.add.button(
+                        left, top,
+                        'dialog-btn-sm',
+                        btnData.onClick
+                            ? btnData.onClick
+                            : function () {
+                                me.hide();
+                            },
+                        null,
+                        0, 0, 1
+                    );
+                    button.anchor.set(0.5);
+                    me.body.addChild(button);
+
+                    var text = game.add.text(
+                        left - 2, top + 1,
+                        btnData.text,
+                        {
+                            font: 'bold 28px ' + global.chFont,
+                            fill: color.get('dark-green'),
+                            strokeThickness: 5,
+                            stroke: color.get('white')
+                        }
+                    );
+                    text.anchor.set(0.5);
+                    me.body.addChild(text);
+                });
+                break;
+        }
     };
 
     Dialog.prototype._destroy = function () {

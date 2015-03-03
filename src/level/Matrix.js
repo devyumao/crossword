@@ -2,6 +2,9 @@
  * @file 矩阵
  * @author yumao [zhangyu38@baidu.com]
  * @create 2015-01-25
+ *
+ * 该类只包含玩法逻辑，所有与 render 相关的代码皆在 level 里
+ * 现在想来，有利有弊
  */
 
 define(function () {
@@ -149,11 +152,21 @@ define(function () {
         }
     };
 
+    Grid.prototype.plus = function () {
+        var riddles = this.riddles;
+        for (var type in riddles) {
+            var riddle = riddles[type];
+            if (riddle) {
+                riddle.plus();
+            }
+        }
+    };
+
     Grid.prototype.showWord = function (render) {
         if (!this.isActive()) {
             return;
         }
-        render(this.element, this.word);
+        render(this.element, this.display, this.word);
         this.state = 'solved';
         this.display = this.word;
     };
@@ -175,6 +188,7 @@ define(function () {
             if (!riddle) {
                 continue;
             }
+            // TODO: switch
             if (change === 0) {
                 if (this.correct && this.key !== key) {
                     this.correct = false;

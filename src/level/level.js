@@ -6,23 +6,90 @@
 
 define(function (require) {
 
-    var Matrix = require('./Matrix');
     var ajax = require('common/ajax');
     var global = require('common/global');
     var color = require('common/color');
     var Dialog = require('common/ui/Dialog');
 
-    // var AJAX_URL = 'http://tc-sf-tmc01.tc.baidu.com:8501/ecomui/xiaoyouxi?controller=game&action=';
     var AJAX_URL = 'http://121.40.104.68/ecomui/xiaoyouxi?controller=game&action=';
 
     var game;
+    var levelTop = 20;
     var matrixSize = 10;
     var gridSize = 46;
-    var matrix;
+    var matrix = null;
+    var hint = null;
     var clueAcross = null;
     var clueDown = null;
     var levelNo;
     var levelDataKey;
+
+    function input(process) {
+        var beforeSolved = matrix.isSolved();
+        if (beforeSolved) { // 谜题已解决
+            return;
+        }
+
+        var beforeUnlocked = matrix.isUnlocked();
+
+        process();
+
+        var dialog;
+        if (matrix.isSolved()) {
+            console.log('solved!');
+            global.addSolved(levelNo);
+
+            dialog = new Dialog(game, {
+                msg: '太棒了\n\n您已完成所有谜题！',
+                btns: [
+                    {
+                        text: '下 一 关',
+                        onClick: function () {
+                            game.stateTransition.forward('level', true, false, levelNo + 1);
+                        }
+                    }
+                ]
+            });
+            dialog.show();
+        }
+        else if (!beforeUnlocked && matrix.isUnlocked()) { // 刚好达到解锁要求
+            var unlocked = global.getUnlocked();
+            if (levelNo === unlocked) { // 当前关为最新关
+                console.log('unlocked!');
+                global.setUnlocked(unlocked + 1);
+
+                dialog = new Dialog(game, {
+                    msg: '您已完成80%\n\n恭喜您成功解锁下一关！',
+                    btns: [
+                        {
+                            text: '知 道 啦'
+                        }
+                    ]
+                });
+                dialog.show();
+            }
+        }
+
+        matrix.store();
+    }
+
+    function showWordRender(element, display, word) {
+        var text = element.text;
+        var hide = game.add.tween(text.scale)
+            .to({x: 0, y: 0}, display ? 500 : 1, Phaser.Easing.Back.In, false);
+        var show = game.add.tween(text.scale)
+            .to({x: 1, y: 1}, 500, Phaser.Easing.Back.Out, false);
+
+        hide.onComplete.add(function () {
+            setFontLang(text, 'ch');
+            text.setText(word);
+        });
+
+        hide.chain(show);
+        hide.start();
+
+        matrix.plusSolved(); // 临时
+    }
 
     function setFontLang(text, lang) {
         if (lang === 'en') {
@@ -41,6 +108,7 @@ define(function (require) {
 
     function sltRender(grid) {
         grid.getElement().button.loadTexture('grid-selected');
+
         var clue1 = grid.getAcrossClue();
         if (clue1) {
             clueAcross && clueAcross.destroy();
@@ -51,6 +119,8 @@ define(function (require) {
             clueDown && clueDown.destroy();
             clueDown = createClue('down', '竖：' + clue2);
         }
+
+        hint[grid.isActive() ? 'activate' : 'disable']();
     }
 
     function ajtRender(grid) {
@@ -108,6 +178,7 @@ define(function (require) {
 
         game.add.image(x + 3, y + 4, 'puzzle-shadow');
 
+        var Matrix = require('./Matrix');
         matrix = new Matrix({
             storeKey: 'level-state-' + levelNo,
             size: matrixSize,
@@ -188,79 +259,22 @@ define(function (require) {
         game.add.image(keyLines[0].x - keySize / 2 + 3, keyLines[0].y + 4, 'keyboard-shadow');
 
         var onClick = function () {
-            var beforeSolved = matrix.isSolved();
-            if (beforeSolved) { // 谜题已解决
-                return;
-            }
-
-            var beforeUnlocked = matrix.isUnlocked();
-
-            var selected = matrix.getSelected();
-            if (!selected || !selected.isActive()) {
-                return;
-            }
-
-            var currKey = this.data.key;
-            selected.getElement().text.setText(currKey);
-            selected.test(currKey, function (element, word) {
-                var text = element.text;
-                var hide = game.add.tween(text.scale)
-                    .to({x: 0, y: 0}, 500, Phaser.Easing.Back.In, false);
-                var show = game.add.tween(text.scale)
-                    .to({x: 1, y: 1}, 500, Phaser.Easing.Back.Out, false);
-                hide.onComplete.add(function () {
-                    setFontLang(text, 'ch');
-                    text.setText(word);
-                });
-
-                hide.chain(show);
-                hide.start();
-                
-                matrix.plusSolved(); // 临时
-            });
-
-            var next = matrix.next();
-            if (next) {
-                matrix.select(next.getX(), next.getY(), clrRender, sltRender, ajtRender);
-            }
-
-            var dialog;
-            if (matrix.isSolved()) {
-                console.log('solved!');
-                global.addSolved(levelNo);
-
-                dialog = new Dialog(game, {
-                    msg: '太棒了\n\n您已完成所有谜题！',
-                    btns: [
-                        {
-                            text: '下 一 关',
-                            onClick: function () {
-                                game.stateTransition.forward('level', true, false, levelNo + 1);
-                            }
-                        }
-                    ]
-                });
-                dialog.show();
-            }
-            else if (!beforeUnlocked && matrix.isUnlocked()) { // 刚好达到解锁要求
-                var unlocked = global.getUnlocked();
-                if (levelNo === unlocked) { // 当前关为最新关
-                    console.log('unlocked!');
-                    global.setUnlocked(unlocked + 1);
-
-                    dialog = new Dialog(game, {
-                        msg: '您已完成80%\n\n恭喜您成功解锁下一关！',
-                        btns: [
-                            {
-                                text: '知 道 啦'
-                            }
-                        ]
-                    });
-                    dialog.show();
+            var button = this;
+            input(function () {
+                var selected = matrix.getSelected();
+                if (!selected || !selected.isActive()) {
+                    return;
                 }
-            }
 
-            matrix.store();
+                var currKey = button.data.key;
+                selected.getElement().text.setText(currKey);
+                selected.test(currKey, showWordRender);
+
+                var next = matrix.next();
+                if (next) {
+                    matrix.select(next.getX(), next.getY(), clrRender, sltRender, ajtRender);
+                }
+            });
         };
 
         keyLines.forEach(function (line) {
@@ -288,7 +302,6 @@ define(function (require) {
     }
 
     function initClueBoard() {
-        var padding = 20;
         var x = 10;
         var y = 60;
         game.add.image(x + 3, y + 4, 'clue-shadow');
@@ -320,7 +333,7 @@ define(function (require) {
     return {
         init: function (level) {
             levelNo = level;
-            // levelNo = 1;
+            levelNo = 1;
             levelDataKey = 'level-data-' + levelNo;
         },
         create: function () {
@@ -345,16 +358,32 @@ define(function (require) {
                 0, 0, 1
             );
 
-            var restartBtn = game.add.button(
-                game.width - 10 - 34, 20,
+            // Restart
+            game.add.button(
+                10 + backBtn.width + 10, 20,
                 'restart',
                 function () {
-                    matrix.clear(function (element, isSolved) {
-                        var text = element.text;
-                        text.setText('');
-                        isSolved && setFontLang(text, 'en');
-                        element.button.loadTexture('grid');
+                    var dialog = new Dialog(game, {
+                        msg: '您确定要重新开始吗？',
+                        btns: [
+                            {
+                                text: '是',
+                                onClick: function () {
+                                    matrix.clear(function (element, isSolved) {
+                                        var text = element.text;
+                                        text.setText('');
+                                        isSolved && setFontLang(text, 'en');
+                                        element.button.loadTexture('grid');
+                                        dialog.hide();
+                                    });
+                                }
+                            },
+                            {
+                                text: '否'
+                            }
+                        ]
                     });
+                    dialog.show();
                 },
                 this,
                 0, 0, 1
@@ -364,6 +393,17 @@ define(function (require) {
 
             initKeyboard();
             initClueBoard();
+
+            var Hint = require('./Hint');
+            hint = new Hint(game, {
+                buttonX: game.width - 49 * 3 / 2 - 10 + 7,
+                buttonY: 142 + gridSize * matrixSize + 10 + 103,
+                coinsX: game.width - 10 - 78,
+                coinsY: levelTop - 2,
+                input: input,
+                matrix: matrix,
+                showWordRender: showWordRender
+            });
 
             // global.addSolved(levelNo);
         }

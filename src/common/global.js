@@ -22,6 +22,9 @@ define(function (require) {
         });
     }
 
+    var coins = localStorage.getItem('coins');
+    coins = coins ? +coins : 100;
+
     return {
         getUnlocked: function () {
             return unlocked;
@@ -45,6 +48,15 @@ define(function (require) {
                 }
             }
             localStorage.setItem('solveds', solveds.join(','));
+        },
+
+        getCoins: function () {
+            return coins;
+        },
+
+        setCoins: function (num) {
+            coins = num;
+            localStorage.setItem('coins', coins);
         },
 
         chFont: chFont,
