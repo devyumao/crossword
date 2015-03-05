@@ -23,7 +23,7 @@ define(function (require) {
     }
 
     var coins = localStorage.getItem('coins');
-    coins = coins ? +coins : 100;
+    coins = coins ? +coins : 200;
 
     return {
         getUnlocked: function () {

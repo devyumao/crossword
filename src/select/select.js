@@ -74,30 +74,18 @@ define(function (require) {
 
         return levelGroup;
     }
-    
+
     return {
         create: function () {
-            var me = this;
             game = this.game;
 
             game.add.image(0, 0, 'bg');
 
-            var title = game.add.text(
-                game.width * 0.5, 16,
-                '选 择 关 卡',
-                global.titleStyle
-            );
-            title.anchor.set(0.5, 0);
+            var Title = require('common/ui/Title');
+            new Title(game, {text: '选 择 关 卡'});
 
-            var backBtn = game.add.button(
-                10, 20,
-                'back',
-                function () {
-                    game.stateTransition.back('menu');
-                },
-                this,
-                0, 0, 1
-            );
+            var Back = require('common/ui/Back');
+            new Back(game, {state: 'menu'});
 
             var totalPage = 5;
             var totalCol = 4;

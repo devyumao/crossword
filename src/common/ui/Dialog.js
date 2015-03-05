@@ -59,6 +59,12 @@ define(function (require) {
         var game = this.game;
         // var left = game.width * 0.5;
         var top = 400 - 320;
+        var fontStyle = {
+            font: 'bold 28px ' + global.chFont,
+            fill: color.get('dark-green'),
+            strokeThickness: 5,
+            stroke: color.get('white')
+        };
         switch (btns.length) {
             case 1:
                 var btnData = btns[0];
@@ -79,12 +85,7 @@ define(function (require) {
                 var text = game.add.text(
                     0, top - 3,
                     btnData.text,
-                    {
-                        font: 'bold 28px ' + global.chFont,
-                        fill: color.get('dark-green'),
-                        strokeThickness: 5,
-                        stroke: color.get('white')
-                    }
+                    fontStyle
                 );
                 text.anchor.set(0.5);
                 me.body.addChild(text);
@@ -110,12 +111,7 @@ define(function (require) {
                     var text = game.add.text(
                         left - 2, top + 1,
                         btnData.text,
-                        {
-                            font: 'bold 28px ' + global.chFont,
-                            fill: color.get('dark-green'),
-                            strokeThickness: 5,
-                            stroke: color.get('white')
-                        }
+                        fontStyle
                     );
                     text.anchor.set(0.5);
                     me.body.addChild(text);

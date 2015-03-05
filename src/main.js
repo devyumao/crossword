@@ -15,6 +15,7 @@ define(function (require) {
             game.state.add('menu', require('menu/menu'));
             game.state.add('select', require('select/select'));
             game.state.add('level', require('level/level'));
+            game.state.add('pay', require('pay/pay'));
 
             game.state.start('boot');
         }

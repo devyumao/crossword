@@ -26,6 +26,7 @@ define(function (require) {
             game.load.image('dialog', 'img/dialog.png');
             game.load.spritesheet('dialog-btn', 'img/dialog-btn.png', 222, 80);
             game.load.spritesheet('dialog-btn-sm', 'img/dialog-btn-sm.png', 83, 80);
+            game.load.image('null', 'img/null.png');
 
             // STATE menu
             game.load.spritesheet('menu-btn', 'img/menu-btn.png', 234, 80);
@@ -57,10 +58,12 @@ define(function (require) {
             game.load.image('puzzle-shadow', 'img/puzzle-shadow.png');
             game.load.image('clue-shadow', 'img/clue-shadow.png');
 
-            game.load.image('null', 'img/null.png');
+            // STATE pay
+            game.load.image('pay-panel', 'img/pay-panel.png');
+            game.load.image('coin', 'img/coin.png');
         },
         create: function () {
-            this.state.start('menu');
+            this.state.start('level');
         }
     };
 

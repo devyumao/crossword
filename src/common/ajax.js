@@ -22,7 +22,8 @@ define(function () {
             if (xhr.readyState === 4) {
                 if (xhr.status === 200) {
                     settings.success && settings.success(xhr.responseText, xhr);
-                } else {
+                }
+                else {
                     settings.failure && settings.failure(xhr.status, xhr);
                 }
             }
@@ -37,7 +38,8 @@ define(function () {
             if (xhr.readyState === 4) {
                 if (xhr.status === 200) {
                     settings.success && settings.success(xhr.responseText, xhr);
-                } else {
+                }
+                else {
                     settings.failure && settings.failure(xhr.status, xhr);
                 }
             }

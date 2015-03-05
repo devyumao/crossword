@@ -333,7 +333,7 @@ define(function (require) {
     return {
         init: function (level) {
             levelNo = level;
-            // levelNo = 1;
+            levelNo = 1;
             levelDataKey = 'level-data-' + levelNo;
         },
         create: function () {
@@ -341,26 +341,15 @@ define(function (require) {
 
             game.add.image(0, 0, 'bg');
 
-            var title = game.add.text(
-                game.width * 0.5, 16,
-                '第 ' + levelNo + ' 关',
-                global.titleStyle
-            );
-            title.anchor.set(0.5, 0);
+            var Title = require('common/ui/Title');
+            new Title(game, {text: '第 ' + levelNo + ' 关'});
 
-            var backBtn = game.add.button(
-                10, 20,
-                'back',
-                function () {
-                    game.stateTransition.back('select');
-                },
-                this,
-                0, 0, 1
-            );
+            var Back = require('common/ui/Back');
+            var back = new Back(game, {state: 'select'});
 
             // Restart
             game.add.button(
-                10 + backBtn.width + 10, 20,
+                10 + back.getElement().width + 10, 20,
                 'restart',
                 function () {
                     var dialog = new Dialog(game, {
@@ -402,7 +391,8 @@ define(function (require) {
                 coinsY: levelTop - 2,
                 input: input,
                 matrix: matrix,
-                showWordRender: showWordRender
+                showWordRender: showWordRender,
+                levelNo: levelNo
             });
 
             // global.addSolved(levelNo);

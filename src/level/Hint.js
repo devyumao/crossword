@@ -32,10 +32,16 @@ define(function () {
                 var coins = global.getCoins() - this.unitCost;
                 if (coins < 0) { // 金币不足
                     var dialog = new Dialog(game, {
-                        msg: '您的金币不足啦',
+                        msg: '您的金币不足啦', // + '\n获得一个提示需要20枚金币'
                         btns: [
+                            // {
+                            //     text: '获取金币',
+                            //     onClick: function () {
+                            //         game.stateTransition.forward('pay', true, false, options.levelNo);
+                            //     }
+                            // },
                             {
-                                text: '知 道 啦'
+                                text: '回到游戏'
                             }
                         ]
                     });
@@ -69,9 +75,11 @@ define(function () {
             options.coinsY,
             'coincard',
             function () {
-
+                // game.stateTransition.forward('pay', true, false, options.levelNo);
             },
-            this
+            this,
+            // 0, 0, 1
+            0, 0, 0
         );
 
         this.coinText = game.add.text(
