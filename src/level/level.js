@@ -109,14 +109,14 @@ define(function (require) {
     function sltRender(grid) {
         grid.getElement().button.loadTexture('grid-selected');
 
+        clueAcross && clueAcross.destroy();
+        clueDown && clueDown.destroy();
         var clue1 = grid.getAcrossClue();
         if (clue1) {
-            clueAcross && clueAcross.destroy();
             clueAcross = createClue('across', '横：' + clue1);
         }
         var clue2 = grid.getDownClue();
         if (clue2) {
-            clueDown && clueDown.destroy();
             clueDown = createClue('down', '竖：' + clue2);
         }
 
