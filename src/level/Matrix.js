@@ -374,8 +374,12 @@ define(function () {
     };
 
     Matrix.prototype.goRight = function (x, y) {
+        var right = this.right(x, y);
+        if (!right) {
+            right = this.right(x + 1, y);
+        }
         this.direction = 'right';
-        return this.right(x, y);
+        return right;
     };
 
     Matrix.prototype.goDown = function (x, y) {
