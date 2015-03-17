@@ -17,7 +17,7 @@ define(function () {
         var game = this.game;
         var top = 38;
         for (var s = 0; s < 3; ++s) {
-            var left = 67 + s * 38;
+            var left = 70 + s * 36;
             var eStar = game.add.image(left, top, 'star-empty');
             eStar.anchor.set(0.5);
             var sStar = game.add.image(left, top, 'star-solid');

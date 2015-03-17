@@ -18,7 +18,7 @@ define(function (require) {
     Title.prototype._init = function () {
         var game = this.game;
         var title = game.add.text(
-            game.width * 0.5, 16,
+            game.width * 0.5, 20,
             this.text,
             global.titleStyle
         );

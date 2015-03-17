@@ -409,7 +409,7 @@ define(function (require) {
     return {
         init: function (level) {
             levelNo = level;
-            // levelNo = 2;
+            levelNo = 1;
             levelDataKey = global.storageKey.levelData + levelNo;
         },
         create: function () {
