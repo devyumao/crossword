@@ -9,7 +9,7 @@ define(function (require) {
     function initWeixin() {
         var appId = 'wx06c09a44f6e68fe4';
 
-        var wx = require('../dep/jweixin');
+        var wx = require('dep/jweixin');
 
         require('common/ajax').get({
             url: require('common/url').GET_SIGNATURE,

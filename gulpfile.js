@@ -5,7 +5,10 @@ var uglify = require('gulp-uglify');
 var del = require('del');
 
 var requireConfig = {
-    baseUrl: 'src'
+    baseUrl: 'src',
+    paths: {
+        dep: '../dep'
+    }
 };
 
 var options = {
