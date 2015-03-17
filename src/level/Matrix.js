@@ -9,6 +9,8 @@
 
 define(function () {
 
+    var global = require('common/global');
+
     function coord(x, y) {
         return '' + x + y;
     }
@@ -282,7 +284,8 @@ define(function () {
 
     // Matrix
     function Matrix(options) {
-        this.storeKey = options.storeKey;
+        this.level = options.level;
+        this.storeKey = global.storageKey.levelState + options.level;
         this.size = options.size;
         this.data = options.data;
         this.grids = {};
@@ -395,17 +398,7 @@ define(function () {
         var curr = this.selected;
         var x = curr.getX();
         var y = curr.getY();
-        // if (arguments.length === 1) {
-        //     curr = arguments[0];
-        //     x = curr.getX();
-        //     y = curr.getY();
-        // }
-        // else {
-        //     x = arguments[0];
-        //     y = arguments[1];
-        //     curr = this.get(x, y);
-        // }
-        
+
         if (!curr) {
             return null;
         }
@@ -616,6 +609,38 @@ define(function () {
 
     Matrix.prototype.isUnlocked = function () {
         return this.solved / this.active >= 0.8;
+    };
+
+    var starRatio = {
+        1: 0.3,
+        2: 0.6,
+        3: 1
+    };
+
+    Matrix.prototype.checkStar = function (render1, render2, render3) {
+        var star = global.getStar(this.level);
+        var ratio = this.solved / this.active;
+
+        switch (star) {
+            case 2:
+                if (ratio === starRatio[3]) {
+                    render3();
+                    global.setStar(this.level, 3);
+                }
+                break;
+            case 1:
+                if (ratio >= starRatio[2]) {
+                    render2();
+                    global.setStar(this.level, 2);
+                }
+                break;
+            case 0:
+                if (ratio >= starRatio[1]) {
+                    render1();
+                    global.setStar(this.level, 1);
+                }
+                break;
+        }
     };
 
     return Matrix;

@@ -2,7 +2,6 @@ var gulp = require('gulp');
 var amdOptimizer = require('gulp-amd-optimizer');
 var concat = require('gulp-concat');
 var uglify = require('gulp-uglify');
-var eventStream = require('event-stream');
 var del = require('del');
 
 var requireConfig = {
@@ -13,24 +12,17 @@ var options = {
     umd: false
 };
 
-function depScript() {
-    return gulp.src([
-        'dep/esl.js',
-        'dep/phaser.min.js',
-        'dep/phaser-state-transition.min.js'
-    ]);
-}
-
-function srcScript() {
+gulp.task('script:src', function () {
     return gulp.src('src/**/*.js', {base: requireConfig.baseUrl})
         .pipe(amdOptimizer(requireConfig, options))
-        .pipe(uglify({mangle: false}));
-}
-
-gulp.task('script', function () {
-    return eventStream.merge(depScript(), srcScript())
         .pipe(concat('game.js'))
-        .pipe(gulp.dest('dist/js'));
+        .pipe(uglify({mangle: false}))
+        .pipe(gulp.dest('dist/asset'));
+});
+
+gulp.task('script:dep', function () {
+    return gulp.src('dep/*.js')
+        .pipe(gulp.dest('dist/dep'));
 });
 
 gulp.task('clean:image', function () {
@@ -38,12 +30,13 @@ gulp.task('clean:image', function () {
 });
 
 gulp.task('image', function () {
-    return gulp.src(['img/*.png', 'img/*.ico', '!img/psd'])
+    return gulp.src(['img/*.png', 'img/*.ico'])
         .pipe(gulp.dest('dist/img'));
 });
 
 gulp.task('default', [
-    'script',
+    'script:dep',
+    'script:src',
     'clean:image',
     'image'
 ]);

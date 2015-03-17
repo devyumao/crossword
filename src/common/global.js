@@ -11,52 +11,61 @@ define(function (require) {
     var chFont = 'Microsoft Yahei';
     var enFont = 'Arial';
 
-    var unlocked = localStorage.getItem('unlocked');
+    var storagePrefix = 'crossword-';
+    var storageKey = {
+        unlocked: storagePrefix + 'unlocked',
+        coins: storagePrefix + 'coins',
+        levelData: storagePrefix + 'level-data-',
+        levelState: storagePrefix + 'level-state-',
+        stars: storagePrefix + 'stars'
+    };
+
+    var unlocked = localStorage.getItem(storageKey.unlocked);
     unlocked = unlocked ? +unlocked : 1;
 
-    var solvedsObj = {};
-    var solveds = localStorage.getItem('solveds');
-    if (solveds) {
-        solveds.split(',').forEach(function (level) {
-            solvedsObj[level] = true;
-        });
-    }
+    var stars = localStorage.getItem(storageKey.stars);
+    stars = stars ? stars.split(',') : [];
 
-    var coins = localStorage.getItem('coins');
+    var coins = localStorage.getItem(storageKey.coins);
     coins = coins ? +coins : 200;
 
     return {
+        // UNLOCKED
         getUnlocked: function () {
             return unlocked;
         },
 
         setUnlocked: function (num) {
             unlocked = num;
-            localStorage.setItem('unlocked', unlocked);
+            localStorage.setItem(storageKey.unlocked, unlocked);
         },
 
-        getSolveds: function () {
-            return solvedsObj;
+        // STARS
+        getStars: function () {
+            return stars;
         },
 
-        addSolved: function (level) {
-            solvedsObj[level] = true;
-            var solveds = [];
-            for (var l in solvedsObj) {
-                if (solvedsObj.hasOwnProperty(l) && solvedsObj[l]) {
-                    solveds.push(l);
-                }
+        getStar: function (level) {
+            var star = stars[level];
+            if (typeof star === 'undefined' || star === '') {
+                return 0;
             }
-            localStorage.setItem('solveds', solveds.join(','));
+            return star;
         },
 
+        setStar: function (level, num) {
+            stars[level] = num;
+            localStorage.setItem(storageKey.stars, stars.join(','));
+        },
+
+        // COINS
         getCoins: function () {
             return coins;
         },
 
         setCoins: function (num) {
             coins = num;
-            localStorage.setItem('coins', coins);
+            localStorage.setItem(storageKey.coins, coins);
         },
 
         chFont: chFont,
@@ -67,7 +76,9 @@ define(function (require) {
             fill: color.get('bg'),
             strokeThickness: 5,
             stroke: color.get('dark-glaze')
-        }
+        },
+
+        storageKey: storageKey
     };
 
 });

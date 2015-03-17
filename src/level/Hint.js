@@ -49,22 +49,22 @@ define(function () {
                     return;
                 }
 
-                var me = this;
-                options.input(function () {
-                    var selected = options.matrix.getSelected();
-                    if (!selected || !selected.isActive()) {
-                        return;
-                    }
+                var matrix = options.matrix;
+                var selected = matrix.getSelected();
+                if (!selected || !selected.isActive()) {
+                    return;
+                }
 
-                    var showWordRender = options.showWordRender;
-                    selected.showWord(showWordRender);
-                    selected.plus();
-                    selected.check(showWordRender);
-                    me.disable();
+                var showWordRender = options.showWordRender;
+                selected.showWord(showWordRender);
+                selected.plus();
+                selected.check(showWordRender);
+                this.disable();
 
-                    global.setCoins(coins);
-                    me.coinText.setText(coins);
-                });
+                global.setCoins(coins);
+                this.coinText.setText(coins);
+
+                matrix.store();
             },
             this,
             0, 0, 1

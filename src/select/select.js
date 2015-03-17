@@ -25,7 +25,6 @@ define(function (require) {
         var levelGroup = game.add.group();
 
         var unlocked = global.getUnlocked();
-        var solveds = global.getSolveds();
 
         var onClick = function () {
             game.stateTransition.forward('level', true, false, this.data.level);
@@ -38,7 +37,7 @@ define(function (require) {
                     if (level <= unlocked) {
                         button = game.add.button(
                             x, y,
-                            solveds[level] ? 'level-solved' : 'level',
+                            'level',
                             onClick,
                             null,
                             1, 0, 1
@@ -56,6 +55,12 @@ define(function (require) {
                         );
                         text.anchor.set(0.5);
                         levelGroup.add(text);
+
+                        var starNum = global.getStar(level);
+                        for (var s = 0; s < starNum; ++s) {
+                            var star = game.add.image(x + s * 29, y + 48, 'star');
+                            star.scale.set(0.5);
+                        }
                     }
                     else {
                         button = game.add.button(

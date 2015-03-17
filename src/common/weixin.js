@@ -6,6 +6,10 @@
 
 define(function (require) {
 
-    // wx.config({});
+    wx.config({
+        debug: true,
+        appId: 'wx06c09a44f6e68fe4',
+        timestamp: '',
+    });
 
 });

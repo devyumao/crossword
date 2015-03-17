@@ -26,6 +26,7 @@ define(function (require) {
             game.load.image('dialog', 'img/dialog.png');
             game.load.spritesheet('dialog-btn', 'img/dialog-btn.png', 222, 80);
             game.load.spritesheet('dialog-btn-sm', 'img/dialog-btn-sm.png', 83, 80);
+            game.load.image('star', 'img/star.png');
             game.load.image('null', 'img/null.png');
 
             // STATE menu
@@ -35,7 +36,6 @@ define(function (require) {
 
             // STATE select
             game.load.spritesheet('level', 'img/level.png', 84, 70);
-            game.load.spritesheet('level-solved', 'img/level-solved.png', 84, 70);
             game.load.image('level-locked', 'img/level-locked.png');
             game.load.spritesheet('last', 'img/last.png', 74, 72);
             game.load.spritesheet('next', 'img/next.png', 74, 72);
@@ -50,13 +50,16 @@ define(function (require) {
 
             game.load.spritesheet('key', 'img/key.png', 49, 49);
             game.load.image('clue', 'img/clue.png');
-            game.load.spritesheet('restart', 'img/restart.png', 37, 38);
+            // game.load.spritesheet('restart', 'img/restart.png', 37, 38);
+            game.load.image('restart', 'img/restart.png');
             game.load.spritesheet('bulb', 'img/bulb.png', 36, 50);
             game.load.spritesheet('coincard', 'img/coincard.png', 83, 42);
 
             game.load.image('keyboard-shadow', 'img/keyboard-shadow.png');
             game.load.image('puzzle-shadow', 'img/puzzle-shadow.png');
             game.load.image('clue-shadow', 'img/clue-shadow.png');
+            game.load.image('star-empty', 'img/star-empty.png');
+            game.load.image('star-solid', 'img/star-solid.png');
 
             // STATE pay
             game.load.image('pay-panel', 'img/pay-panel.png');
