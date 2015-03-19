@@ -59,6 +59,7 @@ define(function (require) {
                         var starNum = global.getStar(level);
                         for (var s = 0; s < starNum; ++s) {
                             var star = game.add.image(x + s * 29, y + 48, 'star');
+                            levelGroup.add(star);
                         }
                     }
                     else {

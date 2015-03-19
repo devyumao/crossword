@@ -66,7 +66,7 @@ define(function (require) {
             game.load.image('coin', 'img/coin.png');
         },
         create: function () {
-            this.state.start('level');
+            this.state.start('menu');
         }
     };
 

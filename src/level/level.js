@@ -20,6 +20,7 @@ define(function (require) {
     var starState = null;
     var clueAcross = null;
     var clueDown = null;
+    var timer = null;
 
     var levelNo;
     var levelDataKey;
@@ -154,13 +155,13 @@ define(function (require) {
                     if (res.retcode) {
                         return;
                     }
-                    var timer = game.time.create();
+                    var t = game.time.create();
                     // 延迟加载，防止面板压住过场
                     // TODO: better solution
-                    timer.add(300, function () {
+                    t.add(300, function () {
                         initPuzzle(preprocessData(res.tableList));
                     });
-                    timer.start();
+                    t.start();
                 }
             });
         }
@@ -327,14 +328,14 @@ define(function (require) {
 
     function createClue(type, content) {
         var height = 72;
-        var ratio = 0.34;
+        var ratio = 0.33;
 
         var clue = game.add.text(
             30,
             48 + height * (type === 'across' ? ratio : (1 - ratio)),
             content,
             {
-                font: '16px ' + global.chFont,
+                font: '18px ' + global.chFont,
                 fill: color.get('dark-green')
             }
         );
@@ -409,7 +410,7 @@ define(function (require) {
     return {
         init: function (level) {
             levelNo = level;
-            levelNo = 1;
+            // levelNo = 1;
             levelDataKey = global.storageKey.levelData + levelNo;
         },
         create: function () {
@@ -428,6 +429,12 @@ define(function (require) {
             initKeyboard();
             initClueBoard();
             initStars();
+
+            var Timer = require('./Timer');
+            timer = new Timer(game);
+        },
+        update: function () {
+
         }
     };
 

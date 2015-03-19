@@ -8,7 +8,7 @@ define(function (require) {
 
     var color = require('common/color');
 
-    var chFont = 'Microsoft Yahei';
+    var chFont = 'Arial';
     var enFont = 'Arial';
 
     var storagePrefix = 'crossword-';
