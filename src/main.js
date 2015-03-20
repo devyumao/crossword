@@ -23,7 +23,7 @@ define(function (require) {
                 }
                 alert(res.str);
                 wx.config({
-                    debug: true,
+                    debug: false,
                     appId: appId,
                     timestamp: res.timestamp,
                     nonceStr: 'yiluwan',
