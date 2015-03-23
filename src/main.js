@@ -22,7 +22,7 @@ define(function (require) {
                     return;
                 }
                 wx.config({
-                    debug: false,
+                    debug: true,
                     appId: appId,
                     timestamp: res.timestamp,
                     nonceStr: 'yiluwan',
@@ -34,11 +34,18 @@ define(function (require) {
                         'onMenuShareWeibo'
                     ]
                 });
+                var link = 'http://static.yiluwan.org/xiaoyouxi/mobile/xyz_abc/crossword/';
+                var imgUrl = 'img/icon-512.png';
+                wx.onMenuShareTimeline({
+                    title: '填字空间 - 挑战最强大脑',
+                    link: link,
+                    imgUrl: imgUrl
+                });
                 wx.onMenuShareAppMessage({
                     title: '填字空间',
                     desc: '挑战最强大脑',
-                    link: 'http://static.yiluwan.org/xiaoyouxi/mobile/xyz_abc/crossword/',
-                    imgUrl: 'img/icon-512.png'
+                    link: link,
+                    imgUrl: imgUrl
                 });
             }
         });
