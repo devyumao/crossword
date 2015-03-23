@@ -29,9 +29,7 @@ define(function (require) {
                     signature: res.token,
                     jsApiList: [
                         'onMenuShareTimeline',
-                        'onMenuShareAppMessage',
-                        'onMenuShareQQ',
-                        'onMenuShareWeibo'
+                        'onMenuShareAppMessage'
                     ]
                 });
                 var link = 'http://static.yiluwan.org/xiaoyouxi/mobile/xyz_abc/crossword/';
