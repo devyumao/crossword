@@ -45,7 +45,7 @@ define(function (require) {
                 wx.onMenuShareTimeline({
                     title: '填字空间 - 挑战最强大脑',
                     link: link,
-                    imgUrl: 'http://static.yiluwan.org/xiaoyouxi/mobile/xyz_abc/crossword/img/icon.png'
+                    imgUrl: imgUrl
                 });
             }
         });
