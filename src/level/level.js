@@ -73,7 +73,7 @@ define(function (require) {
                 global.setUnlocked(unlocked + 1);
 
                 dialog = new Dialog(game, {
-                    msg: '您已完成80%\n\n恭喜您成功解锁下一关！',
+                    msg: '您已完成60%\n\n恭喜您成功解锁下一关！',
                     btns: [
                         {
                             text: '知 道 啦'

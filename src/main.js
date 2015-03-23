@@ -14,14 +14,13 @@ define(function (require) {
         require('common/ajax').get({
             url: require('common/url').GET_SIGNATURE,
             data: {
-                url: location.href
+                url: location.href.split('#')[0]
             },
             success: function (res) {
                 res = JSON.parse(res);
                 if (res.retcode) {
                     return;
                 }
-                alert(res.str);
                 wx.config({
                     debug: false,
                     appId: appId,
