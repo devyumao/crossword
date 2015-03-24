@@ -608,7 +608,7 @@ define(function () {
     };
 
     Matrix.prototype.isUnlocked = function () {
-        return this.solved / this.active >= 0.8;
+        return this.solved / this.active >= 0.6;
     };
 
     var starRatio = {
