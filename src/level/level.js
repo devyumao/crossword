@@ -353,7 +353,7 @@ define(function (require) {
         hint = new Hint(game, {
             buttonX: game.width - 49 * 3 / 2 - 10 + 7,
             buttonY: 142 + gridSize * matrixSize + 10 + 103,
-            coinsX: game.width - 10 - 78,
+            coinsX: game.width - 10 - 96,
             coinsY: levelTop - 2,
             matrix: matrix,
             showWordRender: showWordRender,

@@ -53,7 +53,7 @@ define(function (require) {
             // game.load.spritesheet('restart', 'img/restart.png', 37, 38);
             game.load.image('restart', 'img/restart.png');
             game.load.spritesheet('bulb', 'img/bulb.png', 36, 50);
-            game.load.spritesheet('coincard', 'img/coincard.png', 83, 42);
+            game.load.spritesheet('coincard', 'img/coincard.png', 96, 42);
 
             game.load.image('keyboard-shadow', 'img/keyboard-shadow.png');
             game.load.image('puzzle-shadow', 'img/puzzle-shadow.png');

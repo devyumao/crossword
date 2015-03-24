@@ -106,7 +106,7 @@ define(function () {
     return {
         init: function (level) {
             levelNo = level;
-            levelNo = 1;
+            // levelNo = 1;
         },
 
         create: function () {

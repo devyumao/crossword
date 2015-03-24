@@ -8,8 +8,8 @@ define(function (require) {
 
     var color = require('common/color');
 
-    var chFont = 'Arial';
-    var enFont = 'Arial';
+    var enFont = '"Helvetica Neue", Helvetica, STHeiTi, sans-serif';
+    var chFont = enFont;
 
     var storagePrefix = 'crossword-';
     var storageKey = {

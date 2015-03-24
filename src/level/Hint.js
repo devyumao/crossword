@@ -83,7 +83,7 @@ define(function () {
         );
 
         this.coinText = game.add.text(
-            this.coinCard.x + 41,
+            this.coinCard.x + 53,
             this.coinCard.y + this.coinCard.height * 0.5 + 2,
             global.getCoins() + '',
             {
