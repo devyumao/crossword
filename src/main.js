@@ -33,7 +33,7 @@ define(function (require) {
                     ]
                 });
                 var link = 'http://static.yiluwan.org/xiaoyouxi/mobile/xyz_abc/crossword/';
-                var imgUrl = 'http://static.yiluwan.org/xiaoyouxi/mobile/xyz_abc/crossword/img/icon.png';
+                var imgUrl = 'http://ishowshao-game.qiniudn.com/crossword/icon.png';
                 wx.onMenuShareTimeline({
                     title: '填字空间 - 挑战最强大脑',
                     link: link,
