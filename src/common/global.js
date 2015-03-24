@@ -50,7 +50,7 @@ define(function (require) {
             if (typeof star === 'undefined' || star === '') {
                 return 0;
             }
-            return star;
+            return +star;
         },
 
         setStar: function (level, num) {
