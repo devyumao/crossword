@@ -64,7 +64,7 @@ define(function (require) {
 
     return {
         init: function () {
-            // initWeixin();
+            initWeixin();
             initStates();
         }
     };
